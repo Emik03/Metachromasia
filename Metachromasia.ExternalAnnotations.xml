@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<assembly name="Metachromasia">
+  <member name="M:Metachromasia.PlantData.set_AttackInterval(System.Single)">
+    <attribute ctor="M:JetBrains.Annotations.UsedImplicitlyAttribute.#ctor" />
+  </member>
+  <member name="M:Metachromasia.PlantData.set_AttributeCount(System.Int32)">
+    <attribute ctor="M:JetBrains.Annotations.UsedImplicitlyAttribute.#ctor" />
+  </member>
+  <member name="M:Metachromasia.PlantData.set_Cooldown(System.Single)">
+    <attribute ctor="M:JetBrains.Annotations.UsedImplicitlyAttribute.#ctor" />
+  </member>
+  <member name="M:Metachromasia.PlantData.set_Health(System.Int32)">
+    <attribute ctor="M:JetBrains.Annotations.UsedImplicitlyAttribute.#ctor" />
+  </member>
+  <member name="M:Metachromasia.PlantData.set_Price(System.Int32)">
+    <attribute ctor="M:JetBrains.Annotations.UsedImplicitlyAttribute.#ctor" />
+  </member>
+  <member name="M:Metachromasia.PlantData.set_ProductionInterval(System.Single)">
+    <attribute ctor="M:JetBrains.Annotations.UsedImplicitlyAttribute.#ctor" />
+  </member>
+</assembly>
