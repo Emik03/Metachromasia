@@ -76,9 +76,9 @@
       },
       "DotNetProjectFile.Analyzers": {
         "type": "Direct",
-        "requested": "[1.8.2, )",
-        "resolved": "1.8.2",
-        "contentHash": "qpiZM1TBr1UfOkFr+n7ZvV8URWLz4NqtJ55/Z71DXUZ/FCtjXPb7HKd2mCbTLvI3zo4bmWz/LbdEnSe7MMrasg=="
+        "requested": "[1.9.0, )",
+        "resolved": "1.9.0",
+        "contentHash": "DdQiI4C+Z26EUPxIG9BYoBNDTUDiuX23F+LeC6HOsgaUApQsQr/xKtx7PSRCBpc4GT1wNiTNPYE7WOxbGnvUdw=="
       },
       "Emik.SourceGenerators.Choices": {
         "type": "Direct",
@@ -173,21 +173,21 @@
       },
       "Meziantou.Analyzer": {
         "type": "Direct",
-        "requested": "[2.0.279, )",
-        "resolved": "2.0.279",
-        "contentHash": "5U7m9nnFkhnPUJrJRdAQouGdB22HUAnA1u/dNAm1YRsjij04d75FAbS38D5R3FIklNKCijxvyoAlndIgA2GmTA=="
+        "requested": "[3.0.18, )",
+        "resolved": "3.0.18",
+        "contentHash": "6VkvbJbYSTBA/LBsxK/8A5joGm1O6kykHv7DpNmJ1hWSyr41SUYUK+mm9unQvfD8lPJX6BW5gbgFp9IqzNby/Q=="
       },
       "Microsoft.CodeAnalysis.Analyzers": {
         "type": "Direct",
-        "requested": "[5.0.0-1.25277.114, )",
-        "resolved": "5.0.0-1.25277.114",
-        "contentHash": "c6QPsJG6HzM7eA05YjzEerMWIKgyoF7y0D0MC/mftEll4Vd1Gy6dxH8GO9i3dFpUil0Ij7E4hLLsKdD1IJrkrQ=="
+        "requested": "[5.3.0-2.final, )",
+        "resolved": "5.3.0-2.final",
+        "contentHash": "VzdevMuvWpgH5s7bj+Y8CHaAPvJvzdRjBL/f2bzCEugZIOFOCZfblsbHwbCJ3hUFvvrbbcLcTrLt6HIj3bngAw=="
       },
       "Microsoft.CodeAnalysis.NetAnalyzers": {
         "type": "Direct",
-        "requested": "[10.0.102, )",
-        "resolved": "10.0.102",
-        "contentHash": "4toG7NN4bwoIt5KAUJd8vhJQt5vwaLTBWdDOSeyaAAQP1wXLIkVshsMtKMIrPGpm0w+pHFpX7ffWqdB6ZAinoQ=="
+        "requested": "[11.0.100-preview.1.26104.118, )",
+        "resolved": "11.0.100-preview.1.26104.118",
+        "contentHash": "MpUJR4YBXHRDhsl2EWXQMt5mKVgh4+JGYonQpuOP8UIDtT9ZgiLX4mm4pCXj4IxgKmJ8IxufwwH3fLVusuDTpA=="
       },
       "Nullable.Extended.Analyzer": {
         "type": "Direct",

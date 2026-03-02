@@ -141,7 +141,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         GameAPP.particlePrefab = ResizeAndAdd(GameAPP.particlePrefab, go);
     }
 
-    public static bool HasBuff(string buff) => Lawnf.TravelAdvanced(GetBuff(buff));
+    public static bool HasBuff(string buff) => Lawnf.TravelAdvanced((AdvBuff)GetBuff(buff));
 
     public static bool HasMixBomb(CreatePlant instance, int column, int row, PlantType target)
     {
@@ -365,7 +365,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         foreach (var (l, r) in Plant.Fusions)
         {
             var inversion = r <= PlantType.Nothing;
-            var result = inversion ? (PlantType)~(int)r : Plant.Type;
+            var result = inversion ? ~r : Plant.Type;
             var ingredient = inversion ? Plant.Type : r;
             MixData.AddDataUnordered(l, ingredient, result);
         }

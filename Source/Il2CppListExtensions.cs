@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 namespace Metachromasia;
 
-static class Il2CppListExtensions
+public static class Il2CppListExtensions
 {
     public static System.Collections.Generic.IList<T> AsIList<T>(this Il2CppSystem.Collections.Generic.List<T> l) =>
         new List<T>(l);

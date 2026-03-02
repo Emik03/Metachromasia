@@ -116,7 +116,6 @@ public static class EntityExtensions
         foreach (var s in y.IsEmpty ? [0] : y)
         {
             b = CreateBullet.Instance.SetBullet(p.x + x, p.y + s, plant.thePlantRow + move.Row(), bulletType, move);
-            b.theMovingWay = (int)move;
 
             if (damage is { } d)
                 b.Damage = d;
@@ -149,7 +148,6 @@ public static class EntityExtensions
         foreach (var f in y.IsEmpty ? [0] : y)
         {
             b = CreateBullet.Instance.SetBullet(p.x + x, p.y + f, plant.thePlantRow + move.Row(), bulletType, move);
-            b.theMovingWay = (int)move;
 
             if (onDamage?.Invoke() is { } d)
                 b.Damage = d;
@@ -182,7 +180,6 @@ public static class EntityExtensions
         foreach (var f in y.IsEmpty ? [0] : y)
         {
             b = CreateBullet.Instance.SetBullet(p.x + x, p.y + f, plant.thePlantRow + move.Row(), onBulletType(), move);
-            b.theMovingWay = (int)move;
 
             if (onDamage?.Invoke() is { } d)
                 b.Damage = d;
@@ -321,10 +318,19 @@ public static class EntityExtensions
         plant.transform.Find("head/Shoot") is var c && c ? c.position :
         throw new InvalidOperationException("Cannot infer bullet location.");
 
-    extension(CreateParticle) // ReSharper restore InconsistentNaming
+    extension(CreateParticle)
     {
         public static GameObject
             SetParticle(ParticleType theParticleType, Vector3 position, int row, bool setLayer = true) =>
             CreateParticle.SetParticle((int)theParticleType, position, row, setLayer);
+    }
+
+    extension(Lawnf)
+    {
+        public static bool TravelAdvanced(int buff) => Lawnf.TravelAdvanced((AdvBuff)buff);
+
+        public static bool TravelUltimate(int buff) => Lawnf.TravelUltimate((UltiBuff)buff);
+
+        public static int TravelUltimateLevel(int buff) => Lawnf.TravelUltimateLevel((UltiBuff)buff);
     }
 }

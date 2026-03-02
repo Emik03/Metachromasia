@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <ProjectType>Library</ProjectType>
-        <FileVersion>3.3.1.0</FileVersion>
+        <FileVersion>3.4.2.0</FileVersion>
         <NoWarn>$(NoWarn);CS1591;RCS1158</NoWarn>
         <TargetFramework>net6.0</TargetFramework>
         <IsPlantsVsZombiesFusion>true</IsPlantsVsZombiesFusion>
