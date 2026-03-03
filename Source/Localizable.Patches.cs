@@ -295,7 +295,7 @@ public abstract partial class Localizable<TPlugin>
 
         Debug.Assert(methodBase.DeclaringType is not null);
         var signature = SignatureOf<T>();
-        var signatureParams = signature.GetParameters();
+        var signatureParams = signature.GetParameters()[(methodBase.IsStatic ? 1 : 0)..];
         StringBuilder methodNameBuilder = new(methodBase.Name);
 
         for (var type = methodBase.DeclaringType; type is not null; type = type.DeclaringType)
