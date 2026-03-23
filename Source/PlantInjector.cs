@@ -256,7 +256,6 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
                 harmony.Patch(fn.Method, postfix: new(((Delegate)MatchThisPlant).Method));
 
         var cheatKey = typeof(CheatKey).GetMethod(nameof(CheatKey.CheckCheatCodes), []);
-        // var travelManager = typeof(TravelMgr).GetMethod(nameof(TravelMgr.Awake), Flags, []);
         var seedLibrary = typeof(SeedLibrary).GetMethod(nameof(SeedLibrary.Awake), Flags, []);
         var plantMenu = typeof(AlmanacPlantMenu).GetMethod(nameof(AlmanacPlantMenu.Awake), Flags, []);
         var createPlant = typeof(CreatePlant).GetMethod(nameof(CreatePlant.LimTravel), Flags, [typeof(PlantType)]);
@@ -268,10 +267,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         harmony.Patch(plantBank, postfix: new(((Delegate)InitBankInfo).Method));
         harmony.Patch(seedLibrary, postfix: new(((Delegate)AddSeedSlot).Method));
 
-        _ = Plant.NoAdventure &&
-            harmony.Patch(createPlant, postfix: new(((Delegate)LimTravel).Method)) is var _;
-        // ^ s_buffs is { Count: not 0 } &&
-        // harmony.Patch(travelManager, postfix: new(((Delegate)Buff).Method)) is var _;
+        _ = Plant.NoAdventure && harmony.Patch(createPlant, postfix: new(((Delegate)LimTravel).Method)) is var _;
     }
 
     // ReSharper disable InconsistentNaming
@@ -326,26 +322,6 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             }
     }
 
-    // static void Buff(TravelMgr __instance)
-    // {
-    //     Debug.Assert(s_buffs is not null);
-    //
-    //     if (Travel is 0)
-    //         Travel = TravelMgr.advancedBuffs.Count;
-    //
-    //     if (s_buffIndex is null)
-    //     {
-    //         var upgrades = new bool[Travel + s_buffs.Count];
-    //         __instance.advancedUpgrades.AsSpan().CopyTo(upgrades);
-    //         __instance.advancedUpgrades = upgrades;
-    //     }
-    //
-    //     using var e = s_buffs.GetEnumerator();
-    //
-    //     for (var i = s_buffIndex ?? Travel; e.MoveNext(); i++)
-    //         TravelMgr.advancedBuffs[i] = Localize(e.Current).ToString();
-    // }
-
     static void Load()
     {
         const BindingFlags Flags = BindingFlags.Instance | BindingFlags.Public;
@@ -376,6 +352,17 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             GetHarmony() is { } harmony &&
             typeof(TPlant).GetMethod(nameof(Shooter.GetBulletType), Flags) is var shooter)
             harmony.Patch(shooter, new(((Delegate)GetBulletType).Method));
+
+        if (s_buffs is not { Count: 0 })
+            return;
+
+        if (Travel is 0)
+            Travel = TravelMgr.AdvBuffData.Count;
+
+        using var e = s_buffs.GetEnumerator();
+
+        for (var i = s_buffIndex ?? Travel; e.MoveNext(); i++)
+            TravelMgr.AdvBuffData[(AdvBuff)i] = new ModdedBuff(i, Localize(e.Current).ToString());
     }
 
     // ReSharper disable once CognitiveComplexity
