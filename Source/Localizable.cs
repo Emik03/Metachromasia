@@ -58,22 +58,22 @@ public abstract partial class Localizable<TPlugin>(params Patches patches) : Mel
     public override void OnEarlyInitializeMelon()
     {
         base.OnEarlyInitializeMelon();
-        var isPort = GetType().Name is "Plugin";
 
-        LoggerInstance.Msg(
-            isPort
-                ? "Credits: Original mod by LibraHP, MelonLoader port by Emik. Made with love. <3"
-                : $"Using {nameof(Metachromasia)} v{typeof(Localizable<>).Assembly.GetName().Version}."
-        );
+        if (GetType().Name is "Plugin")
+            LoggerInstance.MsgPastel("Credits: Original mod by LibraHP, MelonLoader port by Emik. Made with love. <3");
 
-        if ($"{(isPort ? GetType().Assembly.GetName().Name : GetType().Name)}.loc.txt".Debug() is var path &&
-            string.IsNullOrWhiteSpace(s_loc = GetType().GetManifestResource<string>(path)))
-            LoggerInstance.Error($"Failed to acquire localization! Is \"{path}\" included as an embedded resource?");
+        LoggerInstance.Msg($"Using {nameof(Metachromasia)} v{typeof(Localizable<>).Assembly.GetName().Version}.");
     }
 
     /// <inheritdoc />
     public override void OnInitializeMelon()
     {
+        var pathName = GetType().Name is "Plugin" ? GetType().Assembly.GetName().Name : GetType().Name;
+
+        if ($"{pathName}.loc.txt".Debug() is var path &&
+            string.IsNullOrWhiteSpace(s_loc = GetType().GetManifestResource<string>(path)))
+            LoggerInstance.Error($"Failed to acquire localization! Is \"{path}\" included as an embedded resource?");
+
         if ((GetHarmony() ?? HarmonyInstance) is { } harmony)
             Patch(harmony);
         else

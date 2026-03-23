@@ -44,17 +44,6 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
 
     public static ParticleType Particle { get; private set; }
 
-    [field: MaybeNull]
-    public static Il2CppAssetBundle Bundle =>
-        field ??= Il2CppAssetBundleManager.LoadFromMemory(
-            $"{typeof(TPlugin).Assembly.GetName().Name}.bundle".Debug() is var name &&
-            typeof(TPlugin).GetManifestResource<byte[]>(name) is { } bytes
-                ? bytes
-                : throw new InvalidOperationException(
-                    $"This assembly does not contain the following required file as an embedded resource: {name}"
-                )
-        );
-
     public static IReadOnlyDictionary<string, BulletType> Bullets => s_bullets;
 
     [field: MaybeNull]
@@ -243,18 +232,12 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
 
         base.Patch(harmony);
 
-        if (typeof(GameAPP).GetMethod(nameof(GameAPP.Awake), Flags, []) is var gameApp &&
-            harmony.GetPatchedMethods().Contains(gameApp))
-        {
-            LoggerInstance?.Warning("Refusing to patch because the method has already been patched before.");
-            return;
-        }
-
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         foreach (var fn in Plant.Tag)
             if (fn is not null)
                 harmony.Patch(fn.Method, postfix: new(((Delegate)MatchThisPlant).Method));
 
+        var gameApp = typeof(GameAPP).GetMethod(nameof(GameAPP.Awake), Flags, []);
         var cheatKey = typeof(CheatKey).GetMethod(nameof(CheatKey.CheckCheatCodes), []);
         var seedLibrary = typeof(SeedLibrary).GetMethod(nameof(SeedLibrary.Awake), Flags, []);
         var plantMenu = typeof(AlmanacPlantMenu).GetMethod(nameof(AlmanacPlantMenu.Awake), Flags, []);
@@ -323,8 +306,8 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         PlantDataManager.PlantData_Modified[Plant.Type] = PlantDataManager.PlantData_Default[Plant.Type] =
             (PlantDataManager.PlantData)Plant;
 
-        foreach (var asset in Bundle.LoadAllAssets())
-            if (asset && asset.TryCast<GameObject>() is { } go)
+        foreach (var asset in PlantData.GetAssets<TPlugin>())
+            if (asset && asset.TryCast<GameObject>() is { } go && go)
                 ProcessGameObject(go, Plant.Prefix);
 
         foreach (var (l, r) in Plant.Fusions)
@@ -446,7 +429,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             return;
 
         var prefab = GameAPP.resourcesManager.plantPrefabs[Plant.Type];
-        var head = __instance.transform.Find("ColorfulCards/Page1");
+        var head = __instance.transform.Find("CardPagesContainer/ColorfulCards/Page1");
         var name = prefab.name[..^Prefab.Length];
 
         if (head.Find(name))

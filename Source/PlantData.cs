@@ -65,6 +65,16 @@ public sealed record PlantData(int Id, bool AddSeedSlot = false, Tag Tag = defau
             produceInterval = data.ProductionInterval,
         };
 
+    /// <summary>Gets the embedded assets from the plugin.</summary>
+    /// <typeparam name="TPlugin">The plugin whose assembly contains assets.</typeparam>
+    /// <returns>The list of assets from <typeparamref name="TPlugin"/>.</returns>
+    public static IReadOnlyList<Object> GetAssets<TPlugin>()
+        where TPlugin : Localizable<TPlugin> =>
+        s_assets.GetOrCreate(
+            typeof(TPlugin).Assembly,
+            _ => Il2CppAssetBundleManager.LoadFromMemory(GetEmbeddedBundle<TPlugin>()).LoadAllAssets()
+        );
+
     /// <inheritdoc />
     public bool ContainsKey(string key) => _dictionary.ContainsKey(key);
 
@@ -79,4 +89,14 @@ public sealed record PlantData(int Id, bool AddSeedSlot = false, Tag Tag = defau
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    static readonly Dictionary<Assembly, IReadOnlyList<Object>> s_assets = [];
+
+    static byte[] GetEmbeddedBundle<TPlugin>() =>
+        $"{typeof(TPlugin).Assembly.GetName().Name}.bundle".Debug() is var name &&
+        typeof(TPlugin).GetManifestResource<byte[]>(name) is { } bytes
+            ? bytes
+            : throw new InvalidOperationException(
+                $"This assembly does not contain the following required file as an embedded resource: {name}"
+            );
 }
