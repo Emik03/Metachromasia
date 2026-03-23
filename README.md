@@ -64,8 +64,8 @@ Assets and some of the source code are omitted to prevent redistribution.
 
 ```cs
 public sealed class Plugin() : PlantInjector<Plugin, PeaShooter, Bullet>(
-	new(507, true) { Price = 404, Cooldown = 100, Damage = 200, [Prefab] = AddComponent<BrainBestScript> },
-	[TypeMgr.IsIcePlant, TypeMgr.IsMagnetPlants, Lawnf.IsUltiPlant]
+	new(507, true, Tag.Ulti | Tag.Ice | Tag.Magnet)
+		{ Price = 404, Cooldown = 100, Damage = 200, [Prefab] = AddComponent<BrainBestScript> }
 );
 ```
 
@@ -74,8 +74,7 @@ public sealed class Plugin() : PlantInjector<Plugin, PeaShooter, Bullet>(
 ```cs
 public sealed class Plugin()
     : PlantInjector<Plugin, Cabbage, Bullet_cabbage>(
-        new(2001, (PlantType.Cabbagepult, (PlantType)2000)) { Price = 125, Cooldown = 15, Damage = 90 },
-        [TypeMgr.IsPuff],
+        new(2001, Tag.Puff, (PlantType.Cabbagepult, (PlantType)2000)) { Price = 125, Cooldown = 15, Damage = 90 },
         Prefix<Zombie>(
             x => x.HitZombie,
             (x, ref z) =>
@@ -97,7 +96,7 @@ public sealed class Plugin()
 
 ```cs
 public sealed class Plugin() : PlantInjector<Plugin, FireCannon, Bullet_cannon>(
-	new(556, (PlantType.DoomShroom, PlantType.CobCannon))
+	new(556, Tag.Double, (PlantType.DoomShroom, PlantType.CobCannon))
 	{
 		Price = 600,
 		AttackInterval = 36,
@@ -105,7 +104,6 @@ public sealed class Plugin() : PlantInjector<Plugin, FireCannon, Bullet_cannon>(
 		Cooldown = 20,
 		Damage = 1800,
 	},
-	[TypeMgr.DoubleBoxPlants],
 	Prefix(x => x.AnimShoot, x => x.Launch(Bullet)),
 	Prefix(
 		x => x.HitLand,
@@ -114,7 +112,7 @@ public sealed class Plugin() : PlantInjector<Plugin, FireCannon, Bullet_cannon>(
 			var columnFromX = Mouse.Instance.GetColumnFromX(x.transform.position.x);
 			var rowFromY = Mouse.Instance.GetRowFromY(x.transform.position.x, x.transform.position.y);
 			Vector2 vector = x.transform.GetChild(0).GetChild(0).position;
-			Board.Instance.SetDoom(columnFromX, rowFromY, false, false, vector, x.Damage);
+			Board.Instance.boardAction.SetDoom(columnFromX, rowFromY, false, false, vector, x.Damage);
 
 			foreach (var p in Lawnf.Get3x3Plants(columnFromX, rowFromY))
 				if (p && !p.dying && !TypeMgr.IsPot(p.thePlantType))
@@ -128,9 +126,10 @@ public sealed class Plugin() : PlantInjector<Plugin, FireCannon, Bullet_cannon>(
 
 ```cs
 public sealed class Plugin() : PlantInjector<Plugin, UltimateChomper, Bullet_ultimateCactus>(
-    new(999, (PlantType.UltimateChomper, PlantType.UltimateTallNut))
-        { Health = 99999, AttackInterval = 0, ProductionInterval = 0, Damage = 9999 },
-    [Lawnf.IsUltiPlant, TypeMgr.IsTallNut],
+    new(999, Tag.Ulti | Tag.AntiCrush | Tag.TallNut, (PlantType.UltimateChomper, PlantType.UltimateTallNut))
+    {
+        Health = 99999, AttackInterval = 0, ProductionInterval = 0, Damage = 9999,
+    },
     Prefix(
         x => x.AnimShoot,
         x =>
@@ -153,20 +152,19 @@ public sealed class Plugin() : PlantInjector<Plugin, UltimateChomper, Bullet_ult
             switch (Random.Range(0, 3))
             {
                 case 0:
-                    Board.Instance.CreateFreeze(x.transform.position);
+                    Board.Instance.boardAction.CreateFreeze(x.transform.position);
                     break;
                 case 1:
-                    Board.Instance.CreateFireLine(x.theBulletRow, x.Damage);
+                    Board.Instance.boardAction.CreateFireLine(x.theBulletRow, x.Damage);
                     break;
                 case 2:
                     var column = Mouse.Instance.GetColumnFromX(x.transform.position.x);
-                    Board.Instance.SetDoom(column, x.theBulletRow, false, false, default, x.Damage);
+                    Board.Instance.boardAction.SetDoom(column, x.theBulletRow, false, false, default, x.Damage);
                     break;
             }
         }
     ),
     Prefix<int, int>(x => x.TakeDamage, (_, ref _, ref _) => s_vulnerable),
-    Prefix<int, int, Zombie>(x => x.Crashed, (_, ref _, ref _, ref z) => z.PushBack()),
     Prefix<UltimateFootballZombie>(
         x => x.AttackEffect,
         (x, ref p) =>
@@ -187,7 +185,7 @@ public sealed class Plugin() : PlantInjector<Plugin, UltimateChomper, Bullet_ult
 
 ```cs
 public sealed class Plugin() : PlantInjector<Plugin, WallNut, Bullet>(
-    new(810)
+    new(810, Tag.Nut)
     {
         Health = 4000,
         Price = 150,
@@ -196,12 +194,11 @@ public sealed class Plugin() : PlantInjector<Plugin, WallNut, Bullet>(
         Cooldown = 30,
         Damage = 100,
         [Prefab] = AddComponent<BarleyNuts>,
-    },
-    [TypeMgr.IsNut]
+    }
 )
 {
     sealed class ImitatorsBarleyNuts() : PlantInjector<ImitatorsBarleyNuts, ObsidianWallNut, Bullet>(
-        new(811)
+        new(811, Tag.Fire | Tag.Nut)
         {
             Health = 12000,
             Price = 500,
@@ -210,12 +207,11 @@ public sealed class Plugin() : PlantInjector<Plugin, WallNut, Bullet>(
             Cooldown = 30,
             Damage = 100,
             [Prefab] = AddComponent<BarleyNuts>,
-        },
-        [TypeMgr.IsFirePlant, TypeMgr.IsNut]
+        }
     );
 
     sealed class ObsidianBarleyNuts() : PlantInjector<ObsidianBarleyNuts, ObsidianWallNut, Bullet>(
-        new(812)
+        new(812, Tag.Fire | Tag.Nut)
         {
             Health = 12000,
             Price = 800,
@@ -225,9 +221,7 @@ public sealed class Plugin() : PlantInjector<Plugin, WallNut, Bullet>(
             Damage = 100,
             [Prefab] = AddComponent<BarleyNuts>,
         },
-        [TypeMgr.IsFirePlant, TypeMgr.IsNut],
-        PrefixUnsafe<CreatePlant, System.Func<int, int, PlantType, Plant, Vector2, bool, bool, Plant, GameObject>,
-            ActCreatePlantSetPlantPatch>(
+        PrefixDangerous<CreatePlant, System.Func<int, int, PlantType, Plant, Vector2, bool, bool, Plant, Plant>, Act>(
             x => x.SetPlant,
             (_, ref _, ref _, ref _, ref p, ref _, ref _, ref _, ref _, ref _) =>
             {
@@ -249,10 +243,8 @@ public sealed class Plugin() : PlantInjector<Plugin, WallNut, Bullet>(
         if (s_nutFusions.Count is not 0)
             return;
 
-        var fusions = Fusions;
-
         foreach (var type in GameAPP.resourcesManager.allPlants)
-            if ((fusions.Get(type, PlantType.WallNut) ?? fusions.Get(type, PlantType.TallNut)) is { } fusion)
+            if ((Fuse(type, PlantType.WallNut) ?? Fuse(type, PlantType.TallNut)) is { } fusion)
                 (Lawnf.IsUltiPlant(fusion) ? s_ultiNutFusions : s_nutFusions).Add(fusion);
     }
 
@@ -264,6 +256,19 @@ public sealed class Plugin() : PlantInjector<Plugin, WallNut, Bullet>(
         new ObsidianBarleyNuts().OnInitializeMelon();
     }
 }
+
+delegate void Act(
+    CreatePlant __instance,
+    ref GameObject __result,
+    ref int __0,
+    ref int __1,
+    ref PlantType __2,
+    ref Plant __3,
+    ref Vector2 __4,
+    ref bool __5,
+    ref bool __6,
+    ref Plant __7
+);
 ```
 
 ## Contribute
