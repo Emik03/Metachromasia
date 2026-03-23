@@ -3,43 +3,21 @@
 namespace Metachromasia;
 
 extern alias core;
-using Inference = (System.Predicate<PlantType> Predicate, System.Converter<Plant.PlantTag, Plant.PlantTag>? Converter);
+using Inference = (Predicate<PlantType> Predicate, Converter<Plant.PlantTag, Plant.PlantTag>? Converter);
 
 public static class EntityExtensions
 {
-    internal static System.Collections.Generic.IEnumerable<Inference> Inferences { get; } =
-    [
-        (TypeMgr.IsNut, x => x with { nutPlant = true }),
-        (TypeMgr.IsPot, x => x with { potPlant = true }),
-        (TypeMgr.BigNut, x => x with { nutPlant = true }),
-        (TypeMgr.IsPuff, x => x with { puffPlant = true }),
-        (TypeMgr.IsIcePlant, x => x with { icePlant = true }),
-        (TypeMgr.IsFirePlant, x => x with { firePlant = true }),
-        (TypeMgr.IsCaltrop, x => x with { caltropPlant = true }),
-        (TypeMgr.IsPumpkin, x => x with { pumpkinPlant = true }),
-        (TypeMgr.IsTallNut, x => x with { tallNutPlant = true }),
-        (TypeMgr.IsPlantern, x => x with { lanternPlant = true }),
-        (TypeMgr.IsWaterPlant, x => x with { waterPlant = true }),
-        (TypeMgr.FlyingPlants, x => x with { flyingPlant = true }),
-        (TypeMgr.IsPotatoMine, x => x with { potatoPlant = true }),
-        (TypeMgr.IsMagnetPlants, x => x with { magnetPlant = true }),
-        (TypeMgr.IsSpickRock, x => x with { spickRockPlant = true }),
-        (TypeMgr.IsTangkelp, x => x with { tanglekelpPlant = true }),
-        (TypeMgr.DoubleBoxPlants, x => x with { doubleBoxPlant = true }),
-        (TypeMgr.IsSmallRangeLantern, x => x with { smallLanternPlant = true }),
-    ];
-
     internal static MethodInfo Cast { get; } = typeof(Il2CppObjectBase).GetMethod(
-        nameof(Il2CppObjectBase.Cast),
-        BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public
-        // ReSharper disable once NullableWarningSuppressionIsUsed
-    )!;
+            nameof(Il2CppObjectBase.Cast),
+            BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public
+        ) ??
+        throw new();
 
     static readonly bool s_debug = IsEnvironmentVariableTrue("METACHROMASIA_DEBUG");
 
     static EntityExtensions()
     {
-        static void WriteLine(object? _, Logger.LogEventArgs evt) => System.Console.WriteLine(evt.Message);
+        static void WriteLine(object? _, Logger.LogEventArgs evt) => Console.WriteLine(evt.Message);
 
         if (!IsEnvironmentVariableTrue("METACHROMASIA_DEBUG_HARMONY") || Logger.ChannelFilter is Logger.LogChannel.All)
             return;
@@ -104,8 +82,8 @@ public static class EntityExtensions
         int? damage = null,
         BulletMoveWay move = BulletMoveWay.MoveRight,
         float? speed = null,
-        System.Action<Bullet>? forEach = null,
-        System.ReadOnlySpan<float> y = default,
+        Action<Bullet>? forEach = null,
+        ReadOnlySpan<float> y = default,
         float x = 0,
         Vector2? origin = null
     )
@@ -133,11 +111,11 @@ public static class EntityExtensions
     public static Bullet Shoot(
         this Plant plant,
         BulletType bulletType,
-        System.Func<int>? onDamage,
+        Func<int>? onDamage,
         BulletMoveWay move = BulletMoveWay.MoveRight,
         float? speed = null,
-        System.Action<Bullet>? forEach = null,
-        System.ReadOnlySpan<float> y = default,
+        Action<Bullet>? forEach = null,
+        ReadOnlySpan<float> y = default,
         float x = 0,
         Vector2? origin = null
     )
@@ -164,12 +142,12 @@ public static class EntityExtensions
 
     public static Bullet Shoot(
         this Plant plant,
-        System.Func<BulletType> onBulletType,
-        System.Func<int>? onDamage,
+        Func<BulletType> onBulletType,
+        Func<int>? onDamage,
         BulletMoveWay move = BulletMoveWay.MoveRight,
         float? speed = null,
-        System.Action<Bullet>? forEach = null,
-        System.ReadOnlySpan<float> y = default,
+        Action<Bullet>? forEach = null,
+        ReadOnlySpan<float> y = default,
         float x = 0,
         Vector2? origin = null
     )
@@ -208,7 +186,7 @@ public static class EntityExtensions
     ) =>
         creator.SetCoin(theColumn, theRow, (int)theItemType, (int)theMoveType, pos, freeSet);
 
-    public static System.Collections.Generic.IEnumerable<Plant> GetPlantHits(this Component c, float r = 1.5f) =>
+    public static IEnumerable<Plant> GetPlantHits(this Component c, float r = 1.5f) =>
         c // ReSharper disable once Unity.PreferNonAllocApi
             ? Physics2D.OverlapCircleAll(c.transform.position, r)
                .Select(x => x.GetComponent<Plant>())
@@ -216,24 +194,24 @@ public static class EntityExtensions
                .Distinct()
             : [];
 
-    public static System.Collections.Generic.IEnumerable<Zombie> GetHits(this Bullet b, float r = 1.5f) =>
+    public static IEnumerable<Zombie> GetHits(this Bullet b, float r = 1.5f) =>
         b // ReSharper disable once Unity.PreferNonAllocApi
             ? Physics2D.OverlapCircleAll(b.transform.position, r, b.zombieLayer)
                .Select(x => x.GetComponent<Zombie>())
                .Where(x => x && x is { isMindControlled: false })
             : [];
 
-    public static System.Collections.Generic.IEnumerable<Zombie> GetHits(this Plant b, float r = 1.5f) =>
+    public static IEnumerable<Zombie> GetHits(this Plant b, float r = 1.5f) =>
         b // ReSharper disable once Unity.PreferNonAllocApi
             ? Physics2D.OverlapCircleAll(b.transform.position, r, b.zombieLayer)
                .Select(x => x.GetComponent<Zombie>())
                .Where(x => x && x is { isMindControlled: false })
             : [];
 
-    public static System.Collections.Generic.IEnumerable<Zombie> GetExplodableHits(this Bullet b, float r = 1.5f) =>
+    public static IEnumerable<Zombie> GetExplodableHits(this Bullet b, float r = 1.5f) =>
         b.GetHits().Where(x => !x.beforeDying && x.theZombieRow - b.theBulletRow is -1 or 0 or 1);
 
-    public static System.Collections.Generic.IEnumerable<Zombie> GetExplodableHits(this Plant b, float r = 1.5f) =>
+    public static IEnumerable<Zombie> GetExplodableHits(this Plant b, float r = 1.5f) =>
         b.GetHits().Where(x => !x.beforeDying && x.theZombieRow - b.thePlantRow is -1 or 0 or 1);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -244,13 +222,13 @@ public static class EntityExtensions
     public static PlantType? Get(this in Span2D<PlantType> span, PlantType row, PlantType column) =>
         span[(int)row, (int)column] is not PlantType.Peashooter and var ret ? ret : null;
 
-    public static T Random<T>(this System.Collections.Generic.IReadOnlyList<T> l) =>
+    public static T Random<T>(this IReadOnlyList<T> l) =>
         l[core::UnityEngine.Random.Range(0, l.Count)];
 
     public static T Random<T>(this Il2CppSystem.Collections.Generic.List<T> l) =>
         l[core::UnityEngine.Random.Range(0, l.Count)];
 
-    internal static bool Eq(this System.Predicate<PlantType> predicate, Inference inference) =>
+    internal static bool Eq(this Predicate<PlantType> predicate, Inference inference) =>
         predicate.Method.MetadataToken == inference.Predicate.Method.MetadataToken &&
         predicate.Method.Module == inference.Predicate.Method.Module;
 

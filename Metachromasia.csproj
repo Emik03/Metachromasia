@@ -1,8 +1,7 @@
 ﻿<!-- SPDX-License-Identifier: MPL-2.0 -->
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <ProjectType>Library</ProjectType>
-        <FileVersion>3.4.2.0</FileVersion>
+        <FileVersion>3.5.0.0</FileVersion>
         <NoWarn>$(NoWarn);CS1591;RCS1158</NoWarn>
         <TargetFramework>net6.0</TargetFramework>
         <IsPlantsVsZombiesFusion>true</IsPlantsVsZombiesFusion>
@@ -10,6 +9,8 @@
     <ItemGroup>
         <PackageReference Remove="Emik.Analyzers.Matches"/>
         <Compile Remove="$(Morsels)/Compile/Source/References/**/*.cs"/>
+        <Compile Include="$(Morsels)/Compile/Source/References/Emik/Numerics/Clamped.cs" Link="Source/References/Emik/Numerics/Clamped.cs"/>
         <Compile Include="$(Morsels)/Compile/Source/References/System/Diagnostics/Attributes.cs" Link="Source/References/System/Diagnostics/Attributes.cs"/>
+        <Compile Include="$(Morsels)/Compile/Source/References/Emik/Collections/Immutable/Bits*.cs" Link="Source/References/Emik/Collections/Immutable/Bits*.cs"/>
     </ItemGroup>
 </Project>

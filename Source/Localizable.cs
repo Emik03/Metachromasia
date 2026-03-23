@@ -2,8 +2,8 @@
 // ReSharper disable once CheckNamespace
 namespace Metachromasia;
 
-using Chars = System.ReadOnlySpan<char>;
-using Patches = System.Collections.Generic.IReadOnlyCollection<System.Func<Patch>>;
+using Chars = ReadOnlySpan<char>;
+using Patches = IReadOnlyCollection<Func<Patch>>;
 
 public abstract partial class Localizable<TPlugin>(params Patches patches) : MelonMod
     where TPlugin : Localizable<TPlugin>
@@ -21,7 +21,7 @@ public abstract partial class Localizable<TPlugin>(params Patches patches) : Mel
     }
 
     [return: NotNullIfNotNull(nameof(predicate))]
-    public static Il2CppSystem.Predicate<T>? ToIl2Cpp<T>(System.Predicate<T> predicate)
+    public static Il2CppSystem.Predicate<T>? ToIl2Cpp<T>(Predicate<T> predicate)
     {
         var ret = DelegateSupport.ConvertDelegate<Il2CppSystem.Predicate<T>>(predicate);
         Debug.Assert(predicate is null || ret is not null);
@@ -95,7 +95,7 @@ public abstract partial class Localizable<TPlugin>(params Patches patches) : Mel
     {
         const char Start = '{', End = '}', Separator = '.';
 
-        foreach (var read in MemoryExtensions.AsSpan(s_loc).Tokenize(Start))
+        foreach (var read in s_loc.AsSpan().Tokenize(Start))
         {
             var header = SplitBy(read, End, out var rest);
             var key = SplitBy(header, Separator, out var lang);

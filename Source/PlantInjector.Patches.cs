@@ -42,158 +42,158 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     public static bool IsTPlant(Object __instance) =>
         __instance && __instance.TryCast<TPlant>() is { } plant && Matches(plant);
 
-    public static System.Func<Patch> Postfix(
-        System.Linq.Expressions.Expression<System.Func<TPlant, Action>> target,
+    public static Func<Patch> Postfix(
+        Expression<Func<TPlant, Action>> target,
         Signatures.ActPatch<TPlant> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTPlant);
 
-    public static System.Func<Patch> Postfix<T>(
-        System.Linq.Expressions.Expression<System.Func<TBullet, System.Action<T>>> target,
+    public static Func<Patch> Postfix<T>(
+        Expression<Func<TBullet, Action<T>>> target,
         Signatures.ActPatch<TBullet, T> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTBullet);
 
-    public static System.Func<Patch> Postfix<T>(
-        System.Linq.Expressions.Expression<System.Func<TPlant, System.Action<T>>> target,
+    public static Func<Patch> Postfix<T>(
+        Expression<Func<TPlant, Action<T>>> target,
         Signatures.ActPatch<TPlant, T> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTPlant);
 
-    public static System.Func<Patch> Postfix<TResult>(
-        System.Linq.Expressions.Expression<System.Func<TPlant, System.Func<TResult>>> target,
+    public static Func<Patch> Postfix<TResult>(
+        Expression<Func<TPlant, Func<TResult>>> target,
         Signatures.ActWithRetPatch<TPlant, TResult> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTPlant);
 
-    public static System.Func<Patch> Postfix<TZombie>(
-        System.Linq.Expressions.Expression<System.Func<TZombie, System.Action<Plant>>> target,
+    public static Func<Patch> Postfix<TZombie>(
+        Expression<Func<TZombie, Action<Plant>>> target,
         Signatures.ActPatch<TZombie, TPlant> impl,
         [CallerLineNumber] int line = 0
     )
         where TZombie : Zombie =>
         Fix(target, impl, line, IsTThenTPlant<TZombie>);
 
-    public static System.Func<Patch> Prefix(
-        System.Linq.Expressions.Expression<System.Func<TBullet, Action>> target,
+    public static Func<Patch> Prefix(
+        Expression<Func<TBullet, Action>> target,
         Signatures.ActPatch<TBullet> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTBullet);
 
-    public static System.Func<Patch> Prefix(
-        System.Linq.Expressions.Expression<System.Func<TPlant, Action>> target,
+    public static Func<Patch> Prefix(
+        Expression<Func<TPlant, Action>> target,
         Signatures.PredPatch<TPlant> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTPlant);
 
-    public static System.Func<Patch> Prefix(
-        System.Linq.Expressions.Expression<System.Func<TPlant, Action>> target,
+    public static Func<Patch> Prefix(
+        Expression<Func<TPlant, Action>> target,
         Signatures.ActPatch<TPlant> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTPlant);
 
-    public static System.Func<Patch> Prefix(
-        System.Linq.Expressions.Expression<System.Func<TBullet, System.Action<Zombie>>> target,
+    public static Func<Patch> Prefix(
+        Expression<Func<TBullet, Action<Zombie>>> target,
         Signatures.ActPatch<TBullet, Zombie> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTBullet);
 
-    public static System.Func<Patch> Prefix<TZombie>(
-        System.Linq.Expressions.Expression<System.Func<TZombie, System.Action<Collider2D>>> target,
+    public static Func<Patch> Prefix<TZombie>(
+        Expression<Func<TZombie, Action<Collider2D>>> target,
         Signatures.ActPatch<TZombie, Collider2D> impl,
         [CallerLineNumber] int line = 0
     )
         where TZombie : Zombie =>
         Fix(target, impl, line, ArgCollidesTPlant<TZombie>);
 
-    public static System.Func<Patch> Prefix<T>(
-        System.Linq.Expressions.Expression<System.Func<TBullet, System.Action<T>>> target,
+    public static Func<Patch> Prefix<T>(
+        Expression<Func<TBullet, Action<T>>> target,
         Signatures.ActPatch<TBullet, T> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTBullet);
 
-    public static System.Func<Patch> Prefix<T>(
-        System.Linq.Expressions.Expression<System.Func<TPlant, System.Action<T>>> target,
+    public static Func<Patch> Prefix<T>(
+        Expression<Func<TPlant, Action<T>>> target,
         Signatures.ActPatch<TPlant, T> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTPlant);
 
-    public static System.Func<Patch> Prefix<T>(
-        System.Linq.Expressions.Expression<System.Func<TPlant, System.Action<T>>> target,
+    public static Func<Patch> Prefix<T>(
+        Expression<Func<TPlant, Action<T>>> target,
         Signatures.PredPatch<TPlant, T> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTPlant);
 
-    public static System.Func<Patch> Prefix<T>(
-        System.Linq.Expressions.Expression<System.Func<T, System.Action<Plant>>> target,
+    public static Func<Patch> Prefix<T>(
+        Expression<Func<T, Action<Plant>>> target,
         Signatures.ActPatch<T, TPlant> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsAnyThenTPlant<T>);
 
-    public static System.Func<Patch> Prefix<T1, T2>(
-        System.Linq.Expressions.Expression<System.Func<TBullet, System.Action<T1, T2>>> target,
+    public static Func<Patch> Prefix<T1, T2>(
+        Expression<Func<TBullet, Action<T1, T2>>> target,
         Signatures.ActPatch<TBullet, T1, T2> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTBullet);
 
-    public static System.Func<Patch> Prefix<T1, T2>(
-        System.Linq.Expressions.Expression<System.Func<TPlant, System.Action<T1, T2>>> target,
+    public static Func<Patch> Prefix<T1, T2>(
+        Expression<Func<TPlant, Action<T1, T2>>> target,
         Signatures.ActPatch<TPlant, T1, T2> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTPlant);
 
-    public static System.Func<Patch> Prefix<T1, T2>(
-        System.Linq.Expressions.Expression<System.Func<TPlant, System.Action<T1, T2>>> target,
+    public static Func<Patch> Prefix<T1, T2>(
+        Expression<Func<TPlant, Action<T1, T2>>> target,
         Signatures.PredPatch<TPlant, T1, T2> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTPlant);
 
-    public static System.Func<Patch> Prefix<T1, T2, T3>(
-        System.Linq.Expressions.Expression<System.Func<TPlant, System.Action<T1, T2, T3>>> target,
+    public static Func<Patch> Prefix<T1, T2, T3>(
+        Expression<Func<TPlant, Action<T1, T2, T3>>> target,
         Signatures.ActPatch<TPlant, T1, T2, T3> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTPlant);
 
-    public static System.Func<Patch> Prefix<T1, T2, T3, T4>(
-        System.Linq.Expressions.Expression<System.Func<TPlant, System.Action<T1, T2, T3, T4>>> target,
+    public static Func<Patch> Prefix<T1, T2, T3, T4>(
+        Expression<Func<TPlant, Action<T1, T2, T3, T4>>> target,
         Signatures.ActPatch<TPlant, T1, T2, T3, T4> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTPlant);
 
-    public static System.Func<Patch> Prefix<TResult>(
-        System.Linq.Expressions.Expression<System.Func<TPlant, System.Func<TResult>>> target,
+    public static Func<Patch> Prefix<TResult>(
+        Expression<Func<TPlant, Func<TResult>>> target,
         Signatures.ActWithRetPatch<TPlant, TResult> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTPlant);
 
-    public static System.Func<Patch> Prefix<TZombie, TResult>(
-        System.Linq.Expressions.Expression<System.Func<TZombie, System.Func<Plant, TResult>>> target,
+    public static Func<Patch> Prefix<TZombie, TResult>(
+        Expression<Func<TZombie, Func<Plant, TResult>>> target,
         Signatures.ActWithRetPatch<TZombie, TResult, TPlant> impl,
         [CallerLineNumber] int line = 0
     )
         where TZombie : Zombie =>
         Fix(target, impl, line, IsTThenAnyThenTPlant<TZombie, TResult>);
 
-    public static System.Func<Patch> Prefix<TResult, T1, T2>(
-        System.Linq.Expressions.Expression<System.Func<TPlant, System.Func<T1, T2, TResult>>> target,
+    public static Func<Patch> Prefix<TResult, T1, T2>(
+        Expression<Func<TPlant, Func<T1, T2, TResult>>> target,
         Signatures.ActWithRetPatch<TPlant, TResult, T1, T2> impl,
         [CallerLineNumber] int line = 0
     ) =>

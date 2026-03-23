@@ -6,58 +6,58 @@ using static OpCodes;
 
 public abstract partial class Localizable<TPlugin>
 {
-    public static System.Func<Patch> Postfix<TInstance>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, Action>> target,
+    public static Func<Patch> Postfix<TInstance>(
+        Expression<Func<TInstance, Action>> target,
         Signatures.ActPatch<TInstance> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
-    public static System.Func<Patch> Postfix<TInstance, T>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, System.Action<T>>> target,
+    public static Func<Patch> Postfix<TInstance, T>(
+        Expression<Func<TInstance, Action<T>>> target,
         Signatures.ActPatch<TInstance, T> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
-    public static System.Func<Patch> Postfix<TInstance, T1, T2>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, System.Action<T1, T2>>> target,
+    public static Func<Patch> Postfix<TInstance, T1, T2>(
+        Expression<Func<TInstance, Action<T1, T2>>> target,
         Signatures.ActPatch<TInstance, T1, T2> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
-    public static System.Func<Patch> Postfix<TInstance, T1, T2, T3>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, System.Action<T1, T2, T3>>> target,
+    public static Func<Patch> Postfix<TInstance, T1, T2, T3>(
+        Expression<Func<TInstance, Action<T1, T2, T3>>> target,
         Signatures.ActPatch<TInstance, T1, T2, T3> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
-    public static System.Func<Patch> Postfix<TInstance, T1, T2, T3, T4>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, System.Action<T1, T2, T3, T4>>> target,
+    public static Func<Patch> Postfix<TInstance, T1, T2, T3, T4>(
+        Expression<Func<TInstance, Action<T1, T2, T3, T4>>> target,
         Signatures.ActPatch<TInstance, T1, T2, T3, T4> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
-    public static System.Func<Patch> Postfix<TInstance, TResult, T>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, System.Func<T, TResult>>> target,
+    public static Func<Patch> Postfix<TInstance, TResult, T>(
+        Expression<Func<TInstance, Func<T, TResult>>> target,
         Signatures.ActWithRetPatch<TInstance, TResult, T> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
-    public static System.Func<Patch> Postfix<TInstance, TResult, T1, T2>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, System.Func<T1, T2, TResult>>> target,
+    public static Func<Patch> Postfix<TInstance, TResult, T1, T2>(
+        Expression<Func<TInstance, Func<T1, T2, TResult>>> target,
         Signatures.ActWithRetPatch<TInstance, TResult, T1, T2> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public static System.Func<Patch> PostfixDangerous<TInstance, TAccessor, TImpl>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, TAccessor>> target,
+    public static Func<Patch> PostfixDangerous<TInstance, TAccessor, TImpl>(
+        Expression<Func<TInstance, TAccessor>> target,
         TImpl impl,
         [CallerLineNumber] int line = 0
     )
@@ -65,65 +65,65 @@ public abstract partial class Localizable<TPlugin>
         where TImpl : Delegate =>
         Fix(target, impl, line, name: nameof(Postfix));
 
-    public static System.Func<Patch> Prefix<TInstance>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, Action>> target,
+    public static Func<Patch> Prefix<TInstance>(
+        Expression<Func<TInstance, Action>> target,
         Signatures.ActPatch<TInstance> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
-    public static System.Func<Patch> Prefix<TInstance>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, Action>> target,
+    public static Func<Patch> Prefix<TInstance>(
+        Expression<Func<TInstance, Action>> target,
         Signatures.PredPatch<TInstance> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
-    public static System.Func<Patch> Prefix<TInstance, T>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, System.Action<T>>> target,
+    public static Func<Patch> Prefix<TInstance, T>(
+        Expression<Func<TInstance, Action<T>>> target,
         Signatures.ActPatch<TInstance, T> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
-    public static System.Func<Patch> Prefix<TInstance, T>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, System.Action<T>>> target,
+    public static Func<Patch> Prefix<TInstance, T>(
+        Expression<Func<TInstance, Action<T>>> target,
         Signatures.PredPatch<TInstance, T> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
-    public static System.Func<Patch> Prefix<TInstance, T1, T2>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, System.Action<T1, T2>>> target,
+    public static Func<Patch> Prefix<TInstance, T1, T2>(
+        Expression<Func<TInstance, Action<T1, T2>>> target,
         Signatures.PredPatch<TInstance, T1, T2> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
-    public static System.Func<Patch> Prefix<TInstance, T1, T2, T3>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, System.Action<T1, T2, T3>>> target,
+    public static Func<Patch> Prefix<TInstance, T1, T2, T3>(
+        Expression<Func<TInstance, Action<T1, T2, T3>>> target,
         Signatures.PredPatch<TInstance, T1, T2, T3> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
-    public static System.Func<Patch> Prefix<TInstance, TResult>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, System.Func<TResult>>> target,
+    public static Func<Patch> Prefix<TInstance, TResult>(
+        Expression<Func<TInstance, Func<TResult>>> target,
         Signatures.ActWithRetPatch<TInstance, TResult> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
-    public static System.Func<Patch> Prefix<TInstance, TResult>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, System.Func<TResult>>> target,
+    public static Func<Patch> Prefix<TInstance, TResult>(
+        Expression<Func<TInstance, Func<TResult>>> target,
         Signatures.PredWithRetPatch<TInstance, TResult> impl,
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line);
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public static System.Func<Patch> PrefixDangerous<TInstance, TAccessor, TImpl>(
-        System.Linq.Expressions.Expression<System.Func<TInstance, TAccessor>> target,
+    public static Func<Patch> PrefixDangerous<TInstance, TAccessor, TImpl>(
+        Expression<Func<TInstance, TAccessor>> target,
         TImpl impl,
         [CallerLineNumber] int line = 0
     )
@@ -132,7 +132,7 @@ public abstract partial class Localizable<TPlugin>
         Fix(target, impl, line, name: nameof(Prefix));
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    protected static System.Func<Patch> Fix<T>(
+    protected static Func<Patch> Fix<T>(
         LambdaExpression targetEx,
         T impl,
         int line,
@@ -155,7 +155,7 @@ public abstract partial class Localizable<TPlugin>
         var delType = del.Method.DeclaringType;
         var isStatic = dParams.Length - 1 == newParams.Length;
         Debug.Assert(delType is not null);
-        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(delType.TypeHandle);
+        RuntimeHelpers.RunClassConstructor(delType.TypeHandle);
 
         var target = delType == del.Target?.GetType()
             ? delType.GetFields(BindingFlags.Public | BindingFlags.Static).FirstOrDefault(x => x.FieldType == delType)
@@ -192,7 +192,7 @@ public abstract partial class Localizable<TPlugin>
         il.Emit(target is null ? Call.Debug() : Callvirt.Debug(), del.Method.Debug());
     }
 
-    static void Emit(ILGenerator il, int i, params System.ReadOnlySpan<OpCode> opCodes)
+    static void Emit(ILGenerator il, int i, params ReadOnlySpan<OpCode> opCodes)
     {
         if (opCodes.Length - 1 is var last && i < last)
             il.Emit(opCodes[i].Debug());

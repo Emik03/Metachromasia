@@ -3,15 +3,14 @@ namespace Metachromasia;
 
 public static class Il2CppListExtensions
 {
-    public static System.Collections.Generic.IList<T> AsIList<T>(this Il2CppSystem.Collections.Generic.List<T> l) =>
+    public static IList<T> AsIList<T>(this Il2CppSystem.Collections.Generic.List<T> l) =>
         new List<T>(l);
 
-    public static System.Collections.Generic.IReadOnlyList<T>
-        AsIReadOnlyList<T>(this Il2CppSystem.Collections.Generic.List<T> l) =>
+    public static IReadOnlyList<T> AsIReadOnlyList<T>(this Il2CppSystem.Collections.Generic.List<T> l) =>
         new List<T>(l);
 
-    sealed class List<T>(Il2CppSystem.Collections.Generic.List<T> list) : System.Collections.Generic.IList<T>,
-        System.Collections.Generic.IReadOnlyList<T>
+    sealed class List<T>(Il2CppSystem.Collections.Generic.List<T> list) : IList<T>,
+        IReadOnlyList<T>
     {
         /// <inheritdoc />
         public bool IsReadOnly => false;
@@ -55,14 +54,14 @@ public static class Il2CppListExtensions
         public int IndexOf(T item) => list.IndexOf(item);
 
         /// <inheritdoc />
-        public System.Collections.Generic.IEnumerator<T> GetEnumerator() => new Enumerator(this);
+        public IEnumerator<T> GetEnumerator() => new Enumerator(this);
 
         /// <inheritdoc />
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         // ReSharper disable once SuggestBaseTypeForParameterInConstructor
         // ReSharper disable NullableWarningSuppressionIsUsed
-        sealed class Enumerator(List<T> list) : System.Collections.Generic.IEnumerator<T>
+        sealed class Enumerator(List<T> list) : IEnumerator<T>
         {
             int _index;
 

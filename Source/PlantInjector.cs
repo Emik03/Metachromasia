@@ -3,10 +3,8 @@
 // ReSharper disable once CheckNamespace
 namespace Metachromasia;
 #pragma warning disable RCS1158
-using Patches = System.Collections.Generic.IReadOnlyCollection<System.Func<Patch>>;
-using Predicates = System.Collections.Generic.IReadOnlyCollection<System.Predicate<PlantType>>;
-using Strings = System.Collections.Generic.IReadOnlyList<string>;
-using Tagger = System.Converter<Plant.PlantTag, Plant.PlantTag>;
+using Patches = IReadOnlyCollection<Func<Patch>>;
+using Strings = IReadOnlyList<string>;
 
 public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localizable<TPlugin>
     where TPlugin : PlantInjector<TPlugin, TPlant, TBullet>, new()
@@ -17,7 +15,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
 
     const string Box = "OutOfTheBox", Sub = "%s", Tag = "<color=yellow>";
 
-    static readonly System.Collections.Generic.Dictionary<string, BulletType> s_bullets = new(StringComparer.Ordinal);
+    static readonly Dictionary<string, BulletType> s_bullets = new(StringComparer.Ordinal);
 
     [UsedImplicitly]
     static int? s_buffIndex;
@@ -26,22 +24,17 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
 
     static Strings? s_buffs;
 
-    static Predicates? s_fns;
-
     readonly PlantData _plant;
 
     protected PlantInjector(PlantData p, params Patches h)
-        : this(p, null, null, null, h) { }
+        : this(p, null, null, h) { }
 
-    protected PlantInjector(PlantData p, Predicates? r = null, params Patches h)
-        : this(p, r, null, null, h) { }
+    protected PlantInjector(PlantData p, Strings? s = null, params Patches h)
+        : this(p, s, null, h) { }
 
-    protected PlantInjector(PlantData p, Predicates? r = null, Strings? s = null, params Patches h)
-        : this(p, r, s, null, h) { }
-
-    protected PlantInjector(PlantData p, Predicates? r = null, Strings? s = null, int? i = null, params Patches h)
+    protected PlantInjector(PlantData p, Strings? s = null, int? i = null, params Patches h)
         : base(h) =>
-        (Plant, _plant, s_fns, s_buffs, s_buffIndex) = (p, p, r, s, i);
+        (Plant, _plant, s_buffs, s_buffIndex) = (p, p, s, i);
 
     public static int Item { get; private set; }
 
@@ -50,10 +43,6 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
     public static BulletType Bullet { get; private set; }
 
     public static ParticleType Particle { get; private set; }
-
-    public static Span2D<int> FusionIds => ToSpan2D<int>(MixData.data);
-
-    public static Span2D<PlantType> Fusions => ToSpan2D<PlantType>(MixData.data);
 
     [field: MaybeNull]
     public static Il2CppAssetBundle Bundle =>
@@ -66,7 +55,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
                 )
         );
 
-    public static System.Collections.Generic.IReadOnlyDictionary<string, BulletType> Bullets => s_bullets;
+    public static IReadOnlyDictionary<string, BulletType> Bullets => s_bullets;
 
     [field: MaybeNull]
     public static PlantData Plant
@@ -75,7 +64,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         set;
     }
 
-    public static System.ReadOnlySpan<float> Gatling => [-0.3f, 0, 0.3f];
+    public static ReadOnlySpan<float> Gatling => [-0.3f, 0, 0.3f];
 
     public static void AddComponent<T>(GameObject x)
         where T : MonoBehaviour
@@ -106,16 +95,16 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             GameAPP.PlaySound(Random.Range(72, 75));
     }
 
-    public static System.Action<Bullet> Pierce(int times) => x => x.penetrationTimes = times;
+    public static Action<Bullet> Pierce(int times) => x => x.penetrationTimes = times;
 
-    public static System.Action<Bullet> Rotate(System.Collections.Generic.IReadOnlyList<int> cycle)
+    public static Action<Bullet> Rotate(IReadOnlyList<int> cycle)
     {
         Debug.Assert(cycle is not null and not []);
         var i = -1;
         return x => x.Rotate(x.gameObject, cycle[i = (i + 1) % cycle.Count]);
     }
 
-    public static System.Action<Bullet> Rotate(int min, int max) => x => x.Rotate(x.gameObject, Random.Range(min, max));
+    public static Action<Bullet> Rotate(int min, int max) => x => x.Rotate(x.gameObject, Random.Range(min, max));
 
     public static void RegisterItem(GameObject go)
     {
@@ -158,7 +147,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         PlantType left,
         PlantType middle,
         PlantType? right = null,
-        params System.ReadOnlySpan<PlantType> results
+        params ReadOnlySpan<PlantType> results
     )
     {
         foreach (var p in Lawnf.Get1x1Plants(instance.thePlantColumn, instance.thePlantRow))
@@ -208,7 +197,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         return Travel;
     }
 
-    public static System.Action<GameObject> GetBulletRegistrator<T>(string? name = null)
+    public static Action<GameObject> GetBulletRegistrator<T>(string? name = null)
         where T : Bullet =>
         x =>
         {
@@ -219,7 +208,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             GameAPP.resourcesManager.allBullets.Add(bulletType);
         };
 
-    public static System.Action<GameObject> AddComponent<T>(System.Action<GameObject> action)
+    public static Action<GameObject> AddComponent<T>(Action<GameObject> action)
         where T : MonoBehaviour =>
         x =>
         {
@@ -227,10 +216,12 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             AddComponent<T>(x);
         };
 
-    public static System.Action<GameObject> AddComponents<T1, T2>(System.Action<GameObject> action)
+    public static Action<GameObject> AddComponents<T1, T2>(Action<GameObject> action)
         where T1 : MonoBehaviour
         where T2 : MonoBehaviour =>
         AddComponent<T2>(AddComponent<T1>(action));
+
+    public static PlantType? Fuse(PlantType a, PlantType b) => MixData.TryGetMix(a, b, out var c, false) ? c : null;
 
     /// <inheritdoc />
     public override void OnInitializeMelon()
@@ -260,8 +251,9 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        foreach (var fn in s_fns?.Where(x => x is not null) ?? [])
-            harmony.Patch(fn.Method, postfix: new(((Delegate)MatchThisPlant).Method));
+        foreach (var fn in Plant.Tag)
+            if (fn is not null)
+                harmony.Patch(fn.Method, postfix: new(((Delegate)MatchThisPlant).Method));
 
         var cheatKey = typeof(CheatKey).GetMethod(nameof(CheatKey.CheckCheatCodes), []);
         // var travelManager = typeof(TravelMgr).GetMethod(nameof(TravelMgr.Awake), Flags, []);
@@ -361,9 +353,11 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         if (PlantDataManager.PlantData_Default.ContainsKey(Plant.Type))
             return;
 
-        var data = (PlantDataManager.PlantData)Plant;
         GameAPP.resourcesManager.allPlants.Add(Plant.Type);
-        PlantDataManager.PlantData_Modified[Plant.Type] = PlantDataManager.PlantData_Default[Plant.Type] = data;
+        _ = Plant.Tag.Has(Metachromasia.Tag.AntiCrush) && TypeMgr.UncrashablePlants.Add(Plant.Type);
+
+        PlantDataManager.PlantData_Modified[Plant.Type] = PlantDataManager.PlantData_Default[Plant.Type] =
+            (PlantDataManager.PlantData)Plant;
 
         foreach (var asset in Bundle.LoadAllAssets())
             if (asset && asset.TryCast<GameObject>() is { } go)
@@ -374,7 +368,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             var inversion = r <= PlantType.Nothing;
             var result = inversion ? ~r : Plant.Type;
             var ingredient = inversion ? Plant.Type : r;
-            MixData.AddDataUnordered(l, ingredient, result);
+            MixData.AddRecipe(l, ingredient, result);
         }
 
         if (Bullet is not BulletType.Bullet_pea &&
@@ -391,10 +385,9 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             ? typeof(TPlugin).Assembly.GetName().Name!
             : typeof(TPlugin).Name;
 
-        new System.Collections.Generic.KeyValuePair<string, string>(go.GetIl2CppType().FullName, go.name).Debug();
-        var span = MemoryExtensions.AsSpan(go.name, go.name.StartsWith(prefix) ? prefix.Length : 0);
+        new KeyValuePair<string, string>(go.GetIl2CppType().FullName, go.name).Debug();
+        var span = go.name.AsSpan(go.name.StartsWith(prefix) ? prefix.Length : 0);
         var rm = GameAPP.resourcesManager;
-        var tagger = GetTagger();
 
         switch (span)
         {
@@ -405,7 +398,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
                 RegisterParticle(go);
                 break;
             case Prefab or "SkinPrefab":
-                RegisterPrefab(go, tagger);
+                RegisterPrefab(go);
                 _ = span is Prefab ? rm.plantPrefabs.TryAdd(Plant.Type, go) : rm.plantSkinDic.TryAdd(Plant.Type, 0);
                 break;
             case "Preview" or "SkinPreview":
@@ -437,7 +430,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         Add(GameAPP.resourcesManager._plantPreviews, go);
     }
 
-    static void RegisterPrefab(GameObject go, [InstantHandle] Tagger? tagger)
+    static void RegisterPrefab(GameObject go)
     {
         const string Shadow = nameof(Shadow);
 
@@ -453,11 +446,9 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         }
 
         var plant = go.AddComponent<TPlant>();
-        plant.thePlantType = Plant.Type;
         plant.tag = nameof(Il2Cpp.Plant);
-
-        if (tagger is not null)
-            plant.plantTag = tagger(plant.plantTag);
+        plant.thePlantType = Plant.Type;
+        plant.plantTag = Plant.Tag.ToPlantTag();
 
         if (Plant.AttributeCount is not 0)
             plant.attributeCount = Plant.AttributeCount;
@@ -490,7 +481,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         newSeed.name = name;
 
         for (var i = 0; i < newSeed.transform.childCount && newSeed.transform.GetChild(i) is var child; i++)
-            switch (MemoryExtensions.AsSpan(child.name).Trim())
+            switch (child.name.AsSpan().Trim())
             {
                 case "Packet":
                     bool free = IZBottomMenu.Instance;
@@ -572,12 +563,4 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
 
         return expandedPrefabs;
     }
-
-    static Tagger? GetTagger() =>
-        s_fns?.Aggregate(
-            (Tagger?)null,
-            (a, n) => EntityExtensions.Inferences.FirstOrDefault(n.Eq).Converter is { } c
-                ? a is not null ? x => a(c(x)) : c
-                : a
-        );
 }
