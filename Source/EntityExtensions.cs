@@ -228,6 +228,16 @@ public static class EntityExtensions
     public static T Random<T>(this Il2CppSystem.Collections.Generic.List<T> l) =>
         l[core::UnityEngine.Random.Range(0, l.Count)];
 
+    public static T? TryUnbox<T>(this Il2CppSystem.Object obj)
+        where T : unmanaged =>
+        Il2CppClassPointerStore<T>.NativeClassPtr != default &&
+        IL2CPP.il2cpp_class_is_assignable_from(
+            Il2CppClassPointerStore<T>.NativeClassPtr,
+            IL2CPP.il2cpp_object_get_class(obj.Pointer)
+        )
+            ? Unsafe.AddByteOffset(ref Unsafe.NullRef<T>(), IL2CPP.il2cpp_object_unbox(obj.Pointer))
+            : default;
+
     internal static bool Eq(this Predicate<PlantType> predicate, Inference inference) =>
         predicate.Method.MetadataToken == inference.Predicate.Method.MetadataToken &&
         predicate.Method.Module == inference.Predicate.Method.Module;

@@ -263,8 +263,8 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
 
         harmony.Patch(gameApp, postfix: new(((Delegate)Load).Method));
         harmony.Patch(cheatKey, new(((Delegate)AddOutOfTheBox).Method));
-        harmony.Patch(plantMenu, postfix: new(((Delegate)AddPlantMenu).Method));
         harmony.Patch(plantBank, postfix: new(((Delegate)InitBankInfo).Method));
+        harmony.Patch(plantMenu, postfix: new(((Delegate)AddPlantMenu).Method));
         harmony.Patch(seedLibrary, postfix: new(((Delegate)AddSeedSlot).Method));
 
         _ = Plant.NoAdventure && harmony.Patch(createPlant, postfix: new(((Delegate)LimTravel).Method)) is var _;
@@ -300,26 +300,14 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         if (__instance.theSeedType != Plant.Id)
             return;
 
-        for (var i = 0; i < __instance.transform.childCount && __instance.transform.GetChild(i) is var c; i++)
-            switch (c ? c.name : null)
-            {
-                case "Name":
-                    (c.GetComponent<TextMeshPro>().text, c.GetChild(0).GetComponent<TextMeshPro>().text) = Name();
-                    break;
-                case "Info":
-                    var mesh = c.GetComponent<TextMeshPro>();
-                    mesh.overflowMode = TextOverflowModes.Page;
-                    mesh.text = Description();
+        (__instance.plantName.text, __instance.plantName_shadow.text) = Name();
+        __instance.introduce.overflowMode = TextOverflowModes.Page;
+        __instance.introduce.fontSize = 36; // 40
+        __instance.introduce.text = Description();
+        // __instance.cost.text = Localize("Cost", "").ToString();
 
-                    if (Localize("Cost", "") is not [] and var cost)
-                        mesh.text += $"\n\n{cost}";
-
-                    mesh.fontSize = 36; // 40
-                    break;
-                // case "Cost":
-                //     c.GetComponent<TextMeshPro>().text = Localize("Cost", "").ToString();
-                //     break;
-            }
+        if (Localize("Cost", "") is not "" and var cost)
+            __instance.introduce.text += $"\n\n{cost}";
     }
 
     static void Load()
