@@ -429,7 +429,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             return;
 
         var prefab = GameAPP.resourcesManager.plantPrefabs[Plant.Type];
-        var head = __instance.transform.Find("CardPagesContainer/ColorfulCards/Page1");
+        var head = __instance.cardPagesContainer.Find("ColorfulCards/Page1");
         var name = prefab.name[..^Prefab.Length];
 
         if (head.Find(name))
