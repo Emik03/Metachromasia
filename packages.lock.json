@@ -16,24 +16,24 @@
       },
       "CommunityToolkit.Common": {
         "type": "Direct",
-        "requested": "[8.4.1, )",
-        "resolved": "8.4.1",
-        "contentHash": "dwROIyuAn+MwIC+KdFQK+Z4R/sxx80WZ7ZYYAFWylPl8cxX4iHupreG3PBSIo9WwXKPpa1V8s3xFjbnT8b54pg=="
+        "requested": "[8.4.2, )",
+        "resolved": "8.4.2",
+        "contentHash": "SedQf214RzGA4Jwdl/auRM6h/8838DAbP0XvCxRWfeRTEnVqtl+6vn/XGYW2aXt8J5cWTh7rPdHWLZmly2qyIg=="
       },
       "CommunityToolkit.Diagnostics": {
         "type": "Direct",
-        "requested": "[8.4.1, )",
-        "resolved": "8.4.1",
-        "contentHash": "pyX2WaXtjyFuuDIFdnGnIEhLGsu3ui+iI8kzKz/qNa8ISy/M1ceMSRTZr9jKkzg0T7VwFFDvgauzAAOxAmONfA==",
+        "requested": "[8.4.2, )",
+        "resolved": "8.4.2",
+        "contentHash": "WC0fk3A49gk6kWjhSZ8CDgPkv+wPHGhMFxUrKRlLtzUYXRFOdTDQ4RsEkZnI9ApO7eJh6nqT2MFmwFptpMs7aw==",
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "6.1.2"
         }
       },
       "CommunityToolkit.HighPerformance": {
         "type": "Direct",
-        "requested": "[8.4.1, )",
-        "resolved": "8.4.1",
-        "contentHash": "BqHc86nn0Dop4zVvA6kDHrREd9Xv+k+qJUpAtxq3VVAdGaCj6xNshIM3FMGynGYxFJc7V2I+HiU3XerLBYwXgA==",
+        "requested": "[8.4.2, )",
+        "resolved": "8.4.2",
+        "contentHash": "2hmtrrU18x6NL3mbuAqwy0KpnoEEJOuK6sH5RKQfD/jHijn2pqvqBUC7WGy9dgNBL9BDA7eOC0kirsNPMp2f4Q==",
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "6.1.2"
         }
@@ -109,11 +109,11 @@
       },
       "InlineIL.Fody": {
         "type": "Direct",
-        "requested": "[1.10.1, )",
-        "resolved": "1.10.1",
-        "contentHash": "t7fTKLi+5tuYzH8PItQm7m0QU6xma7+NPZCDPbn1ebEvtymKmduuueeSOv8Jwm5UmLt1JOUERP/abH4P1AiRLQ==",
+        "requested": "[1.10.2, )",
+        "resolved": "1.10.2",
+        "contentHash": "sJCDXWpPUOPs8uUpbVF5WzT5tsI5ybUI1xM6gzN3CBC4Ckb3J7xcmmrXeUcjbyC9IwFQNyxMir3MyvTzTvCwmw==",
         "dependencies": {
-          "Fody": "6.9.2"
+          "Fody": "6.9.3"
         }
       },
       "InlineMethod.Fody": {

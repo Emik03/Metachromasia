@@ -5,7 +5,11 @@ namespace Metachromasia;
 public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharper disable InconsistentNaming
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public static void MatchThisPlant(PlantType __0, ref bool __result)
+    public static void MatchThisPlant(Plant __0, ref bool __result) =>
+        MatchThisPlantType(__0.thePlantType, ref __result);
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public static void MatchThisPlantType(PlantType __0, ref bool __result)
     {
         if (__0 == Plant.Type)
             __result = true;
@@ -198,4 +202,12 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTPlant);
+
+    static Delegate GetMatcher(Delegate d) =>
+        d.Method.GetParameters()[0].ParameterType switch
+        {
+            var x when x == typeof(Plant) => MatchThisPlant,
+            var x when x == typeof(PlantType) => MatchThisPlantType,
+            var x => throw new InvalidOperationException($"Unknown first parameter type: {x}"),
+        };
 }

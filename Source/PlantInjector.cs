@@ -235,7 +235,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         foreach (var fn in Plant.Tag)
             if (fn is not null)
-                harmony.Patch(fn.Method, postfix: new(((Delegate)MatchThisPlant).Method));
+                harmony.Patch(fn.Method, postfix: new(GetMatcher(fn).Method));
 
         var gameApp = typeof(GameAPP).GetMethod(nameof(GameAPP.Awake), Flags, []);
         var cheatKey = typeof(CheatKey).GetMethod(nameof(CheatKey.CheckCheatCodes), []);
