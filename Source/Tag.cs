@@ -5,10 +5,15 @@ namespace Metachromasia;
 public enum Tag
 {
     None,
+
+    /// <summary>This value is reserved for internal purposes and is not meant to be used outside of it.</summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    Reserved,
+
     Ulti,
-    Snow,
-    AntiCrush = 1 << 2,
-    BigNut = 1 << 3,
+    Snow = 1 << 2,
+    AntiCrush = 1 << 3,
+    BigNut = 1 << 4,
     Fly = 1 << 8,
     HardLand = 1 << 9,
     Water = 1 << 10,
@@ -60,13 +65,14 @@ public static class TagExtensions
 
     public struct Enumerator(Tag tag) : IEnumerator<Delegate?>
     {
-        Bits<Tag>.Enumerator _enumerator = tag;
+        Tag _current = Tag.Reserved;
 
         /// <inheritdoc />
         readonly object? IEnumerator.Current => Current;
 
+        /// <inheritdoc />
         public readonly Delegate? Current =>
-            _enumerator.Current switch
+            _current switch
             {
                 Tag.Ulti => Lawnf.IsUltiPlant,
                 Tag.Snow => TypeMgr.IsSnowPlant,
@@ -96,9 +102,16 @@ public static class TagExtensions
         readonly void IDisposable.Dispose() { }
 
         /// <inheritdoc />
-        public void Reset() => _enumerator.Reset();
+        public void Reset() => _current = Tag.Reserved;
 
         /// <inheritdoc />
-        public bool MoveNext() => _enumerator.MoveNext();
+        public bool MoveNext()
+        {
+            while ((_current = (Tag)((int)_current << 1)) is not Tag.None)
+                if ((tag & _current) is not Tag.None)
+                    return true;
+
+            return false;
+        }
     }
 }

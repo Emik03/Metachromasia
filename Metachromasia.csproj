@@ -5,8 +5,4 @@
         <TargetFramework>net6.0</TargetFramework>
         <IsPlantsVsZombiesFusion>true</IsPlantsVsZombiesFusion>
     </PropertyGroup>
-    <ItemGroup>
-        <Compile Include="$(Morsels)/Compile/Source/References/Emik/Numerics/Clamped.cs" Link="Source/References/Emik/Numerics/Clamped.cs"/>
-        <Compile Include="$(Morsels)/Compile/Source/References/Emik/Collections/Immutable/Bits*.cs" Link="Source/References/Emik/Collections/Immutable/Bits*.cs"/>
-    </ItemGroup>
 </Project>
