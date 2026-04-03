@@ -2,37 +2,72 @@
 
 // ReSharper disable once CheckNamespace
 namespace Metachromasia;
-#pragma warning disable RCS1158
-using Patches = IReadOnlyCollection<Func<Patch>>;
-using Strings = IReadOnlyList<string>;
 
+using Patches = IReadOnlyCollection<Func<Patch>>;
+
+/// <summary>A class responsible for registering one modded plant.</summary>
+/// <remarks><para>Multiple plants have to be registered using separate classes.</para></remarks>
+/// <typeparam name="TPlugin">
+/// The type implementing the modded plant. Referencing <see cref="Plant"/> such as through multiple plants
+/// in the same assembly to look up values from one another can cause a temporary instance to be created of
+/// <typeparamref name="TPlugin"/>. It is therefore imperative that the parameterless constructor should not have
+/// any side effects, and these classes cannot have a circular dependency on each other through <see cref="Plant"/>.
+/// </typeparam>
+/// <typeparam name="TPlant">
+/// The type of <see cref="Il2Cpp.Plant"/> that the modded plant is based on. This will typically be the plant with the
+/// most similar behavior to the plant being added, especially if this plant is part of the ingredient list of its
+/// fusions. The specified <see cref="Il2Cpp.Plant"/> automatically gets added to the prefab, and patches done on the
+/// constructor can infer <typeparamref name="TPlant"/> to refer to this specific modded plant, removing the need to
+/// validate the plant type. If no vanilla plant fits this use case, you can simply specify <see cref="Il2Cpp.Plant"/>,
+/// although this will not instantiate any components onto the registered prefab.
+/// </typeparam>
+/// <typeparam name="TBullet">
+/// The type of <see cref="Il2Cpp.Bullet"/> that the modded bullet is based on. Instantiation and patching work
+/// identically to <typeparamref name="TPlant"/>, except <see cref="Il2Cpp.Bullet"/> should be specified if no vanilla
+/// bullet fits this use case. If a bullet is registered, <see cref="Bullet"/> will contain the registered bullet type,
+/// and can be assumed to contain a <typeparamref name="TBullet"/> component. Unlike <typeparamref name="TPlant"/>, it
+/// is possible to register multiple bullets using <see cref="GetBulletRegistrator"/>, however the instantiation and
+/// patching will only apply to the main bullet being registered, which also includes the value of <see cref="Bullet"/>.
+/// This generic can therefore be thought of as the "default" bullet if specified, and any additional bullets need to
+/// use manual checks for patching and will be contained in <see cref="Bullets"/>.
+/// </typeparam>
 public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localizable<TPlugin>
     where TPlugin : PlantInjector<TPlugin, TPlant, TBullet>, new()
     where TPlant : Plant
     where TBullet : Bullet
 {
+    /// <summary>The text <c>Prefab</c> which is the suffix used to register the prefab.</summary>
     public const string Prefab = nameof(Prefab);
 
+    /// <summary>Used for string searching.</summary>
     const string Box = "OutOfTheBox", Sub = "%s", Tag = "<color=yellow>";
 
+    /// <summary>The bullets registered using <see cref="GetBulletRegistrator"/>.</summary>
     static readonly Dictionary<string, BulletType> s_bullets = new(StringComparer.Ordinal);
 
-    [UsedImplicitly]
+    /// <summary>
+    /// The starting index for the list of buffs.
+    /// If <see langword="null"/>, these buffs are additions.
+    /// If specified, these override the existing <see cref="AdvBuff"/>.
+    /// </summary>
     static int? s_buffIndex;
 
+    /// <summary>Keeps the <c>outofthebox</c> cheat code persistent across sessions.</summary>
     static MelonPreferences_Entry<bool>? s_box;
 
-    static Strings? s_buffs;
+    /// <summary>Contains the buffs to register.</summary>
+    static IReadOnlyList<string>? s_buffs;
 
+    /// <summary>Contains the plant data.</summary>
     readonly PlantData _plant;
 
     protected PlantInjector(PlantData p, params Patches h)
         : this(p, null, null, h) { }
 
-    protected PlantInjector(PlantData p, Strings? s = null, params Patches h)
+    protected PlantInjector(PlantData p, IReadOnlyList<string>? s = null, params Patches h)
         : this(p, s, null, h) { }
 
-    protected PlantInjector(PlantData p, Strings? s = null, int? i = null, params Patches h)
+    protected PlantInjector(PlantData p, IReadOnlyList<string>? s = null, int? i = null, params Patches h)
         : base(h) =>
         (Plant, _plant, s_buffs, s_buffIndex) = (p, p, s, i);
 
@@ -336,7 +371,6 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             TravelMgr.AdvBuffData[(AdvBuff)i] = new ModdedBuff(i, Localize(e.Current).ToString());
     }
 
-    // ReSharper disable once CognitiveComplexity
     static void ProcessGameObject(GameObject go, string? prefix)
     {
         prefix ??= typeof(TPlugin).Name is null or "Plugin" // ReSharper disable once NullableWarningSuppressionIsUsed
