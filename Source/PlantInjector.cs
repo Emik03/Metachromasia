@@ -46,8 +46,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
     static readonly Dictionary<string, BulletType> s_bullets = new(StringComparer.Ordinal);
 
     /// <summary>
-    /// The starting index for the list of buffs.
-    /// If <see langword="null"/>, these buffs are additions.
+    /// The starting index for the list of buffs. If <see langword="null"/>, these buffs are additions.
     /// If specified, these override the existing <see cref="AdvBuff"/>.
     /// </summary>
     static int? s_buffIndex;
@@ -61,26 +60,59 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
     /// <summary>Contains the plant data.</summary>
     readonly PlantData _plant;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlantInjector{TPlugin, TPlant, TBullet}"/> class.
+    /// </summary>
+    /// <param name="p">The plant data.</param>
+    /// <param name="h">The patches.</param>
     protected PlantInjector(PlantData p, params Patches h)
         : this(p, null, null, h) { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlantInjector{TPlugin, TPlant, TBullet}"/> class.
+    /// </summary>
+    /// <param name="p">The plant data.</param>
+    /// <param name="s">The buffs.</param>
+    /// <param name="h">The patches.</param>
     protected PlantInjector(PlantData p, IReadOnlyList<string>? s = null, params Patches h)
         : this(p, s, null, h) { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlantInjector{TPlugin, TPlant, TBullet}"/> class.
+    /// </summary>
+    /// <param name="p">The plant data.</param>
+    /// <param name="s">The buffs.</param>
+    /// <param name="i">
+    /// The starting index for the list of buffs. If <see langword="null"/>, these buffs are additions.
+    /// If specified, these override the existing <see cref="AdvBuff"/>.
+    /// </param>
+    /// <param name="h">The patches.</param>
     protected PlantInjector(PlantData p, IReadOnlyList<string>? s = null, int? i = null, params Patches h)
         : base(h) =>
         (Plant, _plant, s_buffs, s_buffIndex) = (p, p, s, i);
 
+    /// <summary>Contains the index in <see cref="GameAPP.itemPrefab"/> of the registered item, if any.</summary>
     public static int Item { get; private set; }
 
+    /// <summary>Contains the starting buff index used for <see cref="Lawnf.TravelAdvanced"/>, if any.</summary>
     public static int Travel { get; [UsedImplicitly] private set; }
 
+    /// <summary>Contains the implicitly registered <see cref="BulletType"/>.</summary>
     public static BulletType Bullet { get; private set; }
 
+    /// <summary>Contains the implicitly registered <see cref="ParticleType"/>.</summary>
     public static ParticleType Particle { get; private set; }
 
+    /// <summary>
+    /// Contains the explicitly registered <see cref="BulletType"/>
+    /// instances registered with <see cref="GetBulletRegistrator"/>.
+    /// </summary>
     public static IReadOnlyDictionary<string, BulletType> Bullets => s_bullets;
 
+    /// <summary>Gets the plant data.</summary>
+    /// <remarks><para>
+    /// Accessing this property may cause a temporary instantiation of <typeparamref name="TPlugin"/>.
+    /// </para></remarks>
     [field: MaybeNull]
     public static PlantData Plant
     {
@@ -88,28 +120,17 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         set;
     }
 
+    /// <summary>Contains the heights for three bullets for the height of super gatling shooters.</summary>
     public static ReadOnlySpan<float> Gatling => [-0.3f, 0, 0.3f];
 
-    public static void AddComponent<T>(GameObject x)
-        where T : MonoBehaviour
-    {
-        if (!ClassInjector.IsTypeRegisteredInIl2Cpp<T>())
-            ClassInjector.RegisterTypeInIl2Cpp<T>();
-
-        x.AddComponent<T>();
-    }
-
-    public static void AddSortingGroup(GameObject go)
-    {
-        var x = go.AddComponent<SortingGroup>();
-        x.sortingOrder = ushort.MaxValue;
-        x.sortingLayerName = "UI";
-        x.sortAtRoot = true;
-    }
-
+    /// <summary>Pushes back the zombie if collided with this plant.</summary>
+    /// <param name="zombie">The zombie to potentially push back.</param>
+    /// <param name="collider">The collider.</param>
+    /// <param name="damage">The amount of damage the plant should take.</param>
+    /// <param name="muted">Whether to mute the sound.</param>
     public static void PushBack(Zombie zombie, Collider2D collider, int damage, bool muted = false)
     {
-        if (!collider || collider.GetComponent<TPlant>() is var plant && !plant)
+        if (!collider || collider.GetComponent<TPlant>() is var plant && !Matches(plant))
             return;
 
         zombie.transform.Translate(Vector3.right);
@@ -119,17 +140,40 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             GameAPP.PlaySound(Random.Range(72, 75));
     }
 
-    public static Action<Bullet> Pierce(int times) => x => x.penetrationTimes = times;
+    /// <summary>Gets the <see cref="Action{T}"/> for assigning <see cref="Bullet.penetrationTimes"/>.</summary>
+    /// <param name="times">The value to assign.</param>
+    /// <returns>
+    /// The <see cref="Action{T}"/> that assigns <see cref="Bullet.penetrationTimes"/>
+    /// to the parameter <paramref name="times"/>.
+    /// </returns>
+    public static Action<Bullet> Pierce(int times) => b => b.penetrationTimes = times;
 
+    /// <summary>Gets the <see cref="Action{T}"/> for rotating a bullet in a cycle.</summary>
+    /// <param name="cycle">The cycle of angles to rotate the bullet by.</param>
+    /// <returns>
+    /// The <see cref="Action{T}"/> that rotates a bullet in the
+    /// cycle as defined by the parameter <paramref name="cycle"/>.
+    /// </returns>
     public static Action<Bullet> Rotate(IReadOnlyList<int> cycle)
     {
-        Debug.Assert(cycle is not null and not []);
+        if (cycle is null or [])
+            throw new InvalidOperationException($"{nameof(Rotate)}'s {nameof(cycle)} should not be empty or null.");
+
         var i = -1;
         return x => x.Rotate(x.gameObject, cycle[i = (i + 1) % cycle.Count]);
     }
 
+    /// <summary>Gets the <see cref="Action{T}"/> for rotating a bullet within a random range.</summary>
+    /// <param name="min">The minimum angle to rotate by.</param>
+    /// <param name="max">The maximum angle to rotate by.</param>
+    /// <returns>
+    /// The <see cref="Action{T}"/> that rotates a bullet within the range of
+    /// the parameters <paramref name="min"/> and <paramref name="max"/>.
+    /// </returns>
     public static Action<Bullet> Rotate(int min, int max) => x => x.Rotate(x.gameObject, Random.Range(min, max));
 
+    /// <summary>Registers an item into <see cref="Item"/>.</summary>
+    /// <param name="go">The <see cref="GameObject"/> to register as an item.</param>
     public static void RegisterItem(GameObject go)
     {
         for (var i = 0; i < GameAPP.itemPrefab.Count; i++)
@@ -139,9 +183,12 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
                 return;
             }
 
+        Item = GameAPP.itemPrefab.Count;
         GameAPP.itemPrefab = ResizeAndAdd(GameAPP.itemPrefab, go);
     }
 
+    /// <summary>Registers a particle into <see cref="Particle"/>.</summary>
+    /// <param name="go">The <see cref="GameObject"/> to register as a particle.</param>
     public static void RegisterParticle(GameObject go)
     {
         for (var i = 0; i < GameAPP.particlePrefab.Count; i++)
@@ -152,11 +199,21 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
                 return;
             }
 
+        Particle = (ParticleType)GameAPP.particlePrefab.Length;
         GameAPP.particlePrefab = ResizeAndAdd(GameAPP.particlePrefab, go);
     }
 
+    /// <summary>Determines whether the buff is active.</summary>
+    /// <param name="buff">The buff to determine.</param>
+    /// <returns>Whether the parameter <paramref name="buff"/> is active.</returns>
     public static bool HasBuff(string buff) => Lawnf.TravelAdvanced((AdvBuff)GetBuff(buff));
 
+    /// <summary>Check for <see cref="CreatePlant.MixBombCheck"/>.</summary>
+    /// <param name="instance">The instance.</param>
+    /// <param name="column">The column.</param>
+    /// <param name="row">The row.</param>
+    /// <param name="target">The target.</param>
+    /// <returns>Whether there is the parameter <paramref name="target"/> at the location.</returns>
     public static bool HasMixBomb(CreatePlant instance, int column, int row, PlantType target)
     {
         foreach (var v in ToSpan2D<BoardGrid>(instance.board.boardGrid)[column, row].plants)
@@ -166,6 +223,16 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         return false;
     }
 
+    /// <summary>Check for <see cref="MixBomb.AttributeEvent"/>.</summary>
+    /// <param name="instance">The instance.</param>
+    /// <param name="left">The plant to the left of the planted Jicamagic.</param>
+    /// <param name="middle">The plant on the planted Jicamagic.</param>
+    /// <param name="right">
+    /// The plant to the right of the planted Jicamagic.
+    /// Infers to be the parameter <paramref name="left"/> if <see langword="null"/>.
+    /// </param>
+    /// <param name="results">The resulting plants to drop. Infers to be this plant type if empty.</param>
+    /// <returns>Whether Jicamagic merged the plants.</returns>
     public static bool Jicamagic(
         MixBomb instance,
         PlantType left,
@@ -202,13 +269,26 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         return true;
     }
 
+    /// <summary>Determines whether the <see cref="Bullet"/> matches the parameter.</summary>
+    /// <param name="bullet">The bullet to match.</param>
+    /// <returns>Whether the parameter <paramref name="bullet"/> has the same type as <see cref="Bullet"/>.</returns>
     public static bool Matches(Bullet? bullet) => bullet && bullet is { theBulletType: var type } && type == Bullet;
 
+    /// <summary>Determines whether the <see cref="Bullets"/> matches the parameter.</summary>
+    /// <param name="bullet">The bullet to match.</param>
+    /// <param name="name">The bullet to match from <see cref="Bullets"/>.</param>
+    /// <returns>Whether the parameter <paramref name="bullet"/> has the same type as <see cref="Bullets"/>.</returns>
     public static bool Matches(Bullet? bullet, string? name) =>
         bullet && bullet is { theBulletType: var type } && type == (name is null ? Bullet : Bullets[name]);
 
+    /// <summary>Determines whether the <see cref="Plant"/> matches the parameter.</summary>
+    /// <param name="plant">The plant to match.</param>
+    /// <returns>Whether the parameter <paramref name="plant"/> has the same type as <see cref="Plant"/>.</returns>
     public static bool Matches(Plant? plant) => plant && plant is { thePlantType: var type } && type == Plant.Type;
 
+    /// <summary>Gets the buff index from the buff string.</summary>
+    /// <param name="buff">The buff string to get the buff index of.</param>
+    /// <returns>The index of the parameter <paramref name="buff"/>.</returns>
     public static int GetBuff(string buff)
     {
         if (s_buffs is null)
@@ -221,30 +301,53 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         return Travel;
     }
 
+    /// <summary>Gets the bullet registrator.</summary>
+    /// <typeparam name="T">The type of bullet to add.</typeparam>
+    /// <param name="name">The name of the bullet, which if specified will append it to <see cref="Bullets"/>.</param>
+    /// <returns>The <see cref="Action{T}"/> that registers the bullet.</returns>
     public static Action<GameObject> GetBulletRegistrator<T>(string? name = null)
         where T : Bullet =>
-        x =>
+        go =>
         {
             var bulletType = GameAPP.resourcesManager.allBullets.Count + BulletType.Bullet_zombieBlock;
-            x.AddComponent<T>().theBulletType = bulletType;
+            go.AddComponent<T>().theBulletType = bulletType;
             _ = name is null ? Bullet = bulletType : s_bullets[name] = bulletType;
-            GameAPP.resourcesManager.bulletPrefabs.Add(bulletType, x);
+            GameAPP.resourcesManager.bulletPrefabs.Add(bulletType, go);
             GameAPP.resourcesManager.allBullets.Add(bulletType);
         };
 
+    /// <summary>Wraps the <see cref="Action{T}"/> with adding the component.</summary>
+    /// <typeparam name="T">The type of component to add.</typeparam>
+    /// <param name="action">The <see cref="Action{T}"/> to wrap.</param>
+    /// <returns>
+    /// The wrapped <see cref="Action{T}"/> that invokes <paramref name="action"/>
+    /// and adds the component <typeparamref name="T"/>.
+    /// </returns>
     public static Action<GameObject> AddComponent<T>(Action<GameObject> action)
         where T : MonoBehaviour =>
-        x =>
+        go =>
         {
-            action(x);
-            AddComponent<T>(x);
+            action(go);
+            AddComponent<T>(go);
         };
 
+    /// <summary>Wraps the <see cref="Action{T}"/> with adding 2 components.</summary>
+    /// <typeparam name="T1">The first type of component to add.</typeparam>
+    /// <typeparam name="T2">The second type of component to add.</typeparam>
+    /// <param name="action">The <see cref="Action{T}"/> to wrap.</param>
+    /// <returns>
+    /// The wrapped <see cref="Action{T}"/> that invokes <paramref name="action"/>
+    /// and adds the component <typeparamref name="T1"/> and <typeparamref name="T2"/>.
+    /// </returns>
     public static Action<GameObject> AddComponents<T1, T2>(Action<GameObject> action)
         where T1 : MonoBehaviour
         where T2 : MonoBehaviour =>
         AddComponent<T2>(AddComponent<T1>(action));
 
+    /// <summary>Gets the fusion result of two plants.</summary>
+    /// <param name="a">The first plant.</param>
+    /// <param name="b">The second plant.</param>
+    /// <returns>The resulting fusion, if it exists.</returns>
     public static PlantType? Fuse(PlantType a, PlantType b) => MixData.TryGetMix(a, b, out var c, false) ? c : null;
 
     /// <inheritdoc />
@@ -261,6 +364,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             ClassInjector.RegisterTypeInIl2Cpp(type);
     }
 
+    /// <inheritdoc />
     protected override void Patch(HarmonyLib.Harmony harmony)
     {
         const BindingFlags Flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -543,16 +647,5 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         var capacity = Tag.Length + span.Length - Sub.Length + Math.Max(Sub.Length, id.Length);
         var ret = new StringBuilder(Tag, capacity).Append(span).Replace(Sub, id).ToString();
         return (ret, ret[Tag.Length..]);
-    }
-
-    // ReSharper disable once SuggestBaseTypeForParameter
-    static Il2CppReferenceArray<GameObject?> ResizeAndAdd(Il2CppReferenceArray<GameObject> prefabs, GameObject go)
-    {
-        Il2CppReferenceArray<GameObject?> expandedPrefabs = new(prefabs.Count * 2) { [prefabs.Count] = go };
-
-        for (var i = 0; i < prefabs.Count; i++)
-            expandedPrefabs[i] = prefabs[i];
-
-        return expandedPrefabs;
     }
 }

@@ -10,6 +10,28 @@ public abstract partial class Localizable<TPlugin>(params Patches patches) : Mel
 {
     static string? s_loc;
 
+    /// <summary>Adds the component to the provided <see cref="GameObject"/>.</summary>
+    /// <typeparam name="T">The type of <see cref="MonoBehaviour"/> to add to the <see cref="GameObject"/>.</typeparam>
+    /// <param name="go">The <see cref="GameObject"/> to add <typeparamref name="T"/> to.</param>
+    public static void AddComponent<T>(GameObject go)
+        where T : MonoBehaviour
+    {
+        if (!ClassInjector.IsTypeRegisteredInIl2Cpp<T>())
+            ClassInjector.RegisterTypeInIl2Cpp<T>();
+
+        go.AddComponent<T>();
+    }
+
+    /// <summary>Adds the <see cref="SortingGroup"/> to the provided <see cref="GameObject"/>.</summary>
+    /// <param name="go">The <see cref="GameObject"/> to add <c>SortingGroup</c> to.</param>
+    public static void AddSortingGroup(GameObject go)
+    {
+        var x = go.AddComponent<SortingGroup>();
+        x.sortingOrder = ushort.MaxValue;
+        x.sortingLayerName = "UI";
+        x.sortAtRoot = true;
+    }
+
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public static HarmonyLib.Harmony? GetHarmony()
     {
@@ -32,6 +54,22 @@ public abstract partial class Localizable<TPlugin>(params Patches patches) : Mel
         MelonPreferences.GetEntryValue<string?>("PvZ_Fusion_Translator", "Language") is { } language &&
         Find(raw, language, out var first) ? first :
         Find(raw, null, out var second) ? second : fallback ?? $"{{{raw}}}";
+
+    /// <summary>Creates a new resized array with the element at the end.</summary>
+    /// <typeparam name="T">The type of array and element.</typeparam>
+    /// <param name="array">The array to copy.</param>
+    /// <param name="element">The element to append to the parameter <paramref name="array"/>.</param>
+    /// <returns>The new array that concatenates all parameters.</returns>
+    public static Il2CppReferenceArray<T> ResizeAndAdd<T>(Il2CppReferenceArray<T> array, T element)
+        where T : Il2CppObjectBase?
+    {
+        Il2CppReferenceArray<T> expandedPrefabs = new(array.Count * 2) { [array.Count] = element };
+
+        for (var i = 0; i < array.Count; i++)
+            expandedPrefabs[i] = array[i];
+
+        return expandedPrefabs;
+    }
 
     [EditorBrowsable(EditorBrowsableState.Advanced), MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Span2D<T> ToSpan2D<T>(Il2CppObjectBase obj)
@@ -80,6 +118,8 @@ public abstract partial class Localizable<TPlugin>(params Patches patches) : Mel
             LoggerInstance?.Warning("Refusing to patch because no harmony instance could be found.");
     }
 
+    /// <summary>Patches all methods with the given <see cref="Harmony"/> instance.</summary>
+    /// <param name="harmony">The harmony instance to patch with.</param>
     protected virtual void Patch(HarmonyLib.Harmony harmony)
     {
         foreach (var p in patches)
