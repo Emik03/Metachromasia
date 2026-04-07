@@ -477,7 +477,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
 
     static void ProcessGameObject(GameObject go, string? prefix)
     {
-        prefix ??= typeof(TPlugin).Name is null or "Plugin" // ReSharper disable once NullableWarningSuppressionIsUsed
+        prefix ??= typeof(TPlugin).Name is null or "Plugin"
             ? typeof(TPlugin).Assembly.GetName().Name!
             : typeof(TPlugin).Name;
 

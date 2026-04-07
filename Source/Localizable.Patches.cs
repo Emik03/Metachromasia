@@ -333,7 +333,6 @@ public abstract partial class Localizable<TPlugin>
 
     static Type ToRef(ParameterInfo x) => x.ParameterType.IsByRef ? x.ParameterType : x.ParameterType.MakeByRefType();
 
-    // ReSharper disable once NullableWarningSuppressionIsUsed
     static Type ToDeref(Type type) => type.IsByRef ? type.GetElementType()! : type;
 
     static OpCode LoadIndirectly(Type type) =>
