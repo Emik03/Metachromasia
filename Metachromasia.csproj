@@ -5,4 +5,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <IsPlantsVsZombiesFusion>true</IsPlantsVsZombiesFusion>
     </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="$(Morsels)/Compile/Source/References/System/Diagnostics/Attributes.cs" Link="Source/References/System/Diagnostics/Attributes.cs"/>
+    </ItemGroup>
 </Project>

@@ -7,8 +7,7 @@ using Interface = IReadOnlyDictionary<string, Action<GameObject>>;
 
 public sealed record PlantData(int Id, bool AddSeedSlot = false, Tag Tag = default, params Fusions Fusions) : Interface
 {
-    readonly Dictionary<string, Action<GameObject>> _dictionary =
-        new(StringComparer.Ordinal);
+    readonly Dictionary<string, Action<GameObject>> _dictionary = [with(StringComparer.Ordinal)];
 
     public PlantData(int id, params Fusions fusions)
         : this(id, false, default, fusions) { }

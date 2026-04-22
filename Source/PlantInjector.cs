@@ -43,7 +43,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
     const string Box = "OutOfTheBox", Sub = "%s", Tag = "<color=yellow>";
 
     /// <summary>The bullets registered using <see cref="GetBulletRegistrator"/>.</summary>
-    static readonly Dictionary<string, BulletType> s_bullets = new(StringComparer.Ordinal);
+    static readonly Dictionary<string, BulletType> s_bullets = [with(StringComparer.Ordinal)];
 
     /// <summary>
     /// The starting index for the list of buffs. If <see langword="null"/>, these buffs are additions.

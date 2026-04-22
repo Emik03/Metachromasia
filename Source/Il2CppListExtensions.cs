@@ -10,13 +10,13 @@ public static class Il2CppListExtensions
     {
         /// <summary>Wraps <see cref="Il2CppSystem.Collections.Generic.List{T}"/> as <see cref="IList{T}"/>.</summary>
         /// <returns><see cref="Il2CppSystem.Collections.Generic.List{T}"/> as <see cref="IReadOnlyList{T}"/>.</returns>
-        public IList<T> AsI() => new List<T>(list);
+        public IList<T> AsI() => (List<T>)[with(list)];
 
         /// <summary>
         /// Wraps <see cref="Il2CppSystem.Collections.Generic.List{T}"/> as <see cref="IReadOnlyList{T}"/>.
         /// </summary>
         /// <returns><see cref="Il2CppSystem.Collections.Generic.List{T}"/> as <see cref="IReadOnlyList{T}"/>.</returns>
-        public IReadOnlyList<T> AsIReadOnly() => new List<T>(list);
+        public IReadOnlyList<T> AsIReadOnly() => (List<T>)[with(list)];
     }
 
     /// <summary>The list wrapper for <see cref="Il2CppSystem.Collections.Generic.List{T}"/>.</summary>
