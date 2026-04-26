@@ -4,6 +4,17 @@ namespace Metachromasia;
 
 public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharper disable InconsistentNaming
 {
+    /// <summary>Sets the card level.</summary>
+    /// <param name="plant">The plant type to check.</param>
+    /// <param name="result">The resulting value to assign to.</param>
+    /// <param name="value">The value to assign the parameter <paramref name="result"/> to.</param>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public static void MatchCard(PlantType plant, ref CardLevel result, CardLevel value = CardLevel.Red)
+    {
+        if (Plant.Type == plant)
+            result = value;
+    }
+
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static void MatchThisPlant(Plant __0, ref bool __result) =>
         MatchThisPlantType(__0.thePlantType, ref __result);

@@ -140,38 +140,6 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             GameAPP.PlaySound(Random.Range(72, 75));
     }
 
-    /// <summary>Gets the <see cref="Action{T}"/> for assigning <see cref="Bullet.penetrationTimes"/>.</summary>
-    /// <param name="times">The value to assign.</param>
-    /// <returns>
-    /// The <see cref="Action{T}"/> that assigns <see cref="Bullet.penetrationTimes"/>
-    /// to the parameter <paramref name="times"/>.
-    /// </returns>
-    public static Action<Bullet> Pierce(int times) => b => b.penetrationTimes = times;
-
-    /// <summary>Gets the <see cref="Action{T}"/> for rotating a bullet in a cycle.</summary>
-    /// <param name="cycle">The cycle of angles to rotate the bullet by.</param>
-    /// <returns>
-    /// The <see cref="Action{T}"/> that rotates a bullet in the
-    /// cycle as defined by the parameter <paramref name="cycle"/>.
-    /// </returns>
-    public static Action<Bullet> Rotate(IReadOnlyList<int> cycle)
-    {
-        if (cycle is null or [])
-            throw new InvalidOperationException($"{nameof(Rotate)}'s {nameof(cycle)} should not be empty or null.");
-
-        var i = -1;
-        return x => x.Rotate(x.gameObject, cycle[i = (i + 1) % cycle.Count]);
-    }
-
-    /// <summary>Gets the <see cref="Action{T}"/> for rotating a bullet within a random range.</summary>
-    /// <param name="min">The minimum angle to rotate by.</param>
-    /// <param name="max">The maximum angle to rotate by.</param>
-    /// <returns>
-    /// The <see cref="Action{T}"/> that rotates a bullet within the range of
-    /// the parameters <paramref name="min"/> and <paramref name="max"/>.
-    /// </returns>
-    public static Action<Bullet> Rotate(int min, int max) => x => x.Rotate(x.gameObject, Random.Range(min, max));
-
     /// <summary>Registers an item into <see cref="Item"/>.</summary>
     /// <param name="go">The <see cref="GameObject"/> to register as an item.</param>
     public static void RegisterItem(GameObject go)
@@ -300,6 +268,38 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
 
         return Travel;
     }
+
+    /// <summary>Gets the <see cref="Action{T}"/> for assigning <see cref="Bullet.penetrationTimes"/>.</summary>
+    /// <param name="times">The value to assign.</param>
+    /// <returns>
+    /// The <see cref="Action{T}"/> that assigns <see cref="Bullet.penetrationTimes"/>
+    /// to the parameter <paramref name="times"/>.
+    /// </returns>
+    public static Action<Bullet> Pierce(int times) => b => b.penetrationTimes = times;
+
+    /// <summary>Gets the <see cref="Action{T}"/> for rotating a bullet in a cycle.</summary>
+    /// <param name="cycle">The cycle of angles to rotate the bullet by.</param>
+    /// <returns>
+    /// The <see cref="Action{T}"/> that rotates a bullet in the
+    /// cycle as defined by the parameter <paramref name="cycle"/>.
+    /// </returns>
+    public static Action<Bullet> Rotate(IReadOnlyList<int> cycle)
+    {
+        if (cycle is null or [])
+            throw new InvalidOperationException($"{nameof(Rotate)}'s {nameof(cycle)} should not be empty or null.");
+
+        var i = -1;
+        return x => x.Rotate(x.gameObject, cycle[i = (i + 1) % cycle.Count]);
+    }
+
+    /// <summary>Gets the <see cref="Action{T}"/> for rotating a bullet within a random range.</summary>
+    /// <param name="min">The minimum angle to rotate by.</param>
+    /// <param name="max">The maximum angle to rotate by.</param>
+    /// <returns>
+    /// The <see cref="Action{T}"/> that rotates a bullet within the range of
+    /// the parameters <paramref name="min"/> and <paramref name="max"/>.
+    /// </returns>
+    public static Action<Bullet> Rotate(int min, int max) => x => x.Rotate(x.gameObject, Random.Range(min, max));
 
     /// <summary>Gets the bullet registrator.</summary>
     /// <typeparam name="T">The type of bullet to add.</typeparam>
