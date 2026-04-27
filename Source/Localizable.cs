@@ -71,27 +71,6 @@ public abstract partial class Localizable<TPlugin>(params Patches patches) : Mel
         return expandedPrefabs;
     }
 
-    [EditorBrowsable(EditorBrowsableState.Advanced), MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Span2D<T> ToSpan2D<T>(Il2CppObjectBase obj)
-    {
-        // Hex dump of a 2-dimensional array:
-        //             00  01  02  03  04  05  06  07  08  09  0a  0b  0c  0d  0e  0f
-        //           +----------------------------------------------------------------+
-        // 00000000: | 48, 55, 6f, a6, 76, 7f, 00, 00, 88, 14, a9, 9e, 76, 7f, 00, 00 |
-        // 00000010: | 00, 00, 00, 00, 00, 00, 00, 00, c0, ed, d8, ae, 95, 7f, 00, 00 |
-        // 00000020: | int *length..., 00, 00, 00, 00, int *height..., int *width.... |
-        // 00000030: | 00, 00, 00, 00, 00, 00, 00, 00, int *values................... |
-        //           +----------------------------------------------------------------+
-        ref var root = ref Unsafe.AddByteOffset(ref Unsafe.NullRef<int>(), obj.Pointer);
-
-        return Span2D<T>.DangerousCreate(
-            ref Unsafe.As<int, T>(ref Unsafe.AddByteOffset(ref root, 0x38)),
-            Unsafe.AddByteOffset(ref root, 0x28),
-            Unsafe.AddByteOffset(ref root, 0x2c),
-            0
-        );
-    }
-
     /// <inheritdoc />
     public override void OnEarlyInitializeMelon()
     {
