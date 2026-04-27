@@ -40,7 +40,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
     public const string Prefab = nameof(Prefab);
 
     /// <summary>Used for string searching.</summary>
-    const string Box = "OutOfTheBox", Sub = "%s", Tag = "<color=yellow>";
+    const string Box = "OutOfTheBox", Sub = "%s";
 
     /// <summary>The bullets registered using <see cref="GetBulletRegistrator"/>.</summary>
     static readonly Dictionary<string, BulletType> s_bullets = [with(StringComparer.Ordinal)];
@@ -184,7 +184,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
     /// <returns>Whether there is the parameter <paramref name="target"/> at the location.</returns>
     public static bool HasMixBomb(CreatePlant instance, int column, int row, PlantType target)
     {
-        foreach (var v in ToSpan2D<BoardGrid>(instance.board.boardGrid)[column, row].plants)
+        foreach (var v in instance.board.gridSystem.GetGrid(column, row).plants)
             if (v && v.thePlantType == target)
                 return true;
 
@@ -381,11 +381,9 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         var seedLibrary = typeof(SeedLibrary).GetMethod(nameof(SeedLibrary.Awake), Flags, []);
         var plantMenu = typeof(AlmanacPlantMenu).GetMethod(nameof(AlmanacPlantMenu.Awake), Flags, []);
         var createPlant = typeof(CreatePlant).GetMethod(nameof(CreatePlant.LimTravel), Flags, [typeof(PlantType)]);
-        var plantBank = typeof(AlmanacPlantBank).GetMethod(nameof(AlmanacPlantBank.InitNameAndInfoFromJson), Flags, []);
 
         harmony.Patch(gameApp, postfix: new(((Delegate)Load).Method));
         harmony.Patch(cheatKey, new(((Delegate)AddOutOfTheBox).Method));
-        harmony.Patch(plantBank, postfix: new(((Delegate)InitBankInfo).Method));
         harmony.Patch(plantMenu, postfix: new(((Delegate)AddPlantMenu).Method));
         harmony.Patch(seedLibrary, postfix: new(((Delegate)AddSeedSlot).Method));
 
@@ -401,8 +399,8 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         const string Size = "<size=36>";
 
         // This check isn't necessary but this saves us multiple allocations if false.
-        _ = !AlmanacPlantMenu.PlantAlmanacData.ContainsKey(Plant.Type) &&
-            AlmanacPlantMenu.PlantAlmanacData.TryAdd(
+        _ = !AlmanacDataLoader.plantDatas.ContainsKey(Plant.Type) &&
+            AlmanacDataLoader.plantDatas.TryAdd(
                 Plant.Type,
                 new()
                 {
@@ -417,21 +415,6 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             );
     }
 
-    static void InitBankInfo(AlmanacPlantBank __instance)
-    {
-        if (__instance.theSeedType != Plant.Id)
-            return;
-
-        (__instance.plantName.text, __instance.plantName_shadow.text) = Name();
-        __instance.introduce.overflowMode = TextOverflowModes.Page;
-        __instance.introduce.fontSize = 36; // 40
-        __instance.introduce.text = Description();
-        // __instance.cost.text = Localize("Cost", "").ToString();
-
-        if (Localize("Cost", "") is not "" and var cost)
-            __instance.introduce.text += $"\n\n{cost}";
-    }
-
     static void Load()
     {
         const BindingFlags Flags = BindingFlags.Instance | BindingFlags.Public;
@@ -440,7 +423,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             return;
 
         GameAPP.resourcesManager.allPlants.Add(Plant.Type);
-        _ = Plant.Tag.Has(Metachromasia.Tag.AntiCrush) && TypeMgr.UncrashablePlants.Add(Plant.Type);
+        _ = Plant.Tag.Has(Tag.AntiCrush) && TypeMgr.UncrashablePlants.Add(Plant.Type);
 
         PlantDataManager.PlantData_Modified[Plant.Type] = PlantDataManager.PlantData_Default[Plant.Type] =
             (PlantDataManager.PlantData)Plant;
@@ -630,22 +613,4 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
 
     static bool RequiresRegistering(Type x) =>
         typeof(Il2CppObjectBase).IsAssignableFrom(x) && !ClassInjector.IsTypeRegisteredInIl2Cpp(x);
-
-    static string Description()
-    {
-        var intro = Localize("Introduce", "");
-        var desc = Localize("Description");
-        var pad = intro.IsEmpty ? "" : "\n\n";
-        var capacity = intro.Length + pad.Length + desc.Length;
-        return new StringBuilder(capacity).Append(intro).Append(pad).Append(desc).ToString();
-    }
-
-    static (string WithTag, string WithoutTag) Name()
-    {
-        var span = Localize("Name");
-        var id = Plant.Id.ToString();
-        var capacity = Tag.Length + span.Length - Sub.Length + Math.Max(Sub.Length, id.Length);
-        var ret = new StringBuilder(Tag, capacity).Append(span).Replace(Sub, id).ToString();
-        return (ret, ret[Tag.Length..]);
-    }
 }
