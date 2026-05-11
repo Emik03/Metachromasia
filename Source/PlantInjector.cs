@@ -355,14 +355,12 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
     public override void OnInitializeMelon()
     {
         base.OnInitializeMelon();
+        Array.ForEach(GetType().Assembly.GetExportedTypes(), Register);
         var category = MelonPreferences.CreateCategory(nameof(Metachromasia));
         s_box = category.GetEntry<bool>(Box) ?? category.CreateEntry(Box, false);
 
         if (Enum.IsDefined(Plant.Type))
             LoggerInstance?.Error("Plant type conflict: {PlantType} ({PlantId})", Plant.Type, Plant.Id);
-
-        foreach (var type in GetType().Assembly.GetExportedTypes().Where(RequiresRegistering))
-            ClassInjector.RegisterTypeInIl2Cpp(type);
     }
 
     /// <inheritdoc />
@@ -551,7 +549,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         var plant = go.AddComponent<TPlant>();
         plant.tag = nameof(Il2Cpp.Plant);
         plant.thePlantType = Plant.Type;
-        plant.plantTag = Plant.Tag.ToPlantTag();
+        plant.plantTag = Plant.Tag.ToPlantTag;
 
         if (Plant.AttributeCount is not 0)
             plant.attributeCount = Plant.AttributeCount;
@@ -632,6 +630,14 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         InGameText.Instance.ShowText(Localize("NoAdventure").ToString(), 4);
     }
 
+    /// <summary>Registers the type into <see cref="ClassInjector"/> if needed.</summary>
+    /// <param name="type">The type to potentially need to register.</param>
+    static void Register(Type type)
+    {
+        if (typeof(Il2CppObjectBase).IsAssignableFrom(type) && !ClassInjector.IsTypeRegisteredInIl2Cpp(type))
+            ClassInjector.RegisterTypeInIl2Cpp(type);
+    }
+
     /// <summary>Gets the bullet type.</summary>
     /// <param name="__instance">The instance to match.</param>
     /// <param name="__result">The return value for the hook.</param>
@@ -644,7 +650,4 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         __result = Bullet;
         return false;
     }
-
-    static bool RequiresRegistering(Type x) =>
-        typeof(Il2CppObjectBase).IsAssignableFrom(x) && !ClassInjector.IsTypeRegisteredInIl2Cpp(x);
 }

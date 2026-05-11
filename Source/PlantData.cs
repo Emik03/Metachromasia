@@ -15,7 +15,7 @@ public sealed record PlantData(int Id, bool AddSeedSlot = false, Tag Tag = defau
     static readonly Dictionary<Assembly, IReadOnlyList<Object>> s_assets = [];
 
     /// <summary>Contains the registered callbacks.</summary>
-    readonly Dictionary<string, Action<GameObject>> _dictionary = [with(StringComparer.Ordinal)];
+    readonly Dictionary<string, Action<GameObject>> _callbacks = [with(StringComparer.Ordinal)];
 
     /// <inheritdoc />
     public PlantData(int id, params Fusions fusions)
@@ -29,20 +29,18 @@ public sealed record PlantData(int Id, bool AddSeedSlot = false, Tag Tag = defau
     /// <param name="name">The name of the game object.</param>
     public Action<GameObject> this[string name]
     {
-        get => _dictionary[name];
-        init => _dictionary[name] = value;
+        get => _callbacks[name];
+        init => _callbacks[name] = value;
     }
 
     /// <inheritdoc />
-    int IReadOnlyCollection<
-        KeyValuePair<string, Action<GameObject>>>.Count =>
-        _dictionary.Count;
+    int IReadOnlyCollection<KeyValuePair<string, Action<GameObject>>>.Count => _callbacks.Count;
 
     /// <inheritdoc />
-    IEnumerable<string> Interface.Keys => _dictionary.Keys;
+    IEnumerable<string> Interface.Keys => _callbacks.Keys;
 
     /// <inheritdoc />
-    IEnumerable<Action<GameObject>> Interface.Values => _dictionary.Values;
+    IEnumerable<Action<GameObject>> Interface.Values => _callbacks.Values;
 
     /// <summary>Gets or sets whether to stop this plant from being used in Adventure mode.</summary>
     public bool NoAdventure { get; init; }
@@ -115,16 +113,14 @@ public sealed record PlantData(int Id, bool AddSeedSlot = false, Tag Tag = defau
         );
 
     /// <inheritdoc />
-    public bool ContainsKey(string key) => _dictionary.ContainsKey(key);
+    public bool ContainsKey(string key) => _callbacks.ContainsKey(key);
 
     /// <inheritdoc />
     public bool TryGetValue(string key, [MaybeNullWhen(false)] out Action<GameObject> value) =>
-        _dictionary.TryGetValue(key, out value);
+        _callbacks.TryGetValue(key, out value);
 
     /// <inheritdoc />
-    public IEnumerator<
-        KeyValuePair<string, Action<GameObject>>> GetEnumerator() =>
-        _dictionary.GetEnumerator();
+    public IEnumerator<KeyValuePair<string, Action<GameObject>>> GetEnumerator() => _callbacks.GetEnumerator();
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

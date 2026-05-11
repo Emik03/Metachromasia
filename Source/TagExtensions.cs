@@ -60,24 +60,14 @@ public static class TagExtensions
         }
     }
 
-    /// <param name="tag">The tag to convert.</param>
     extension(Tag tag)
     {
-        /// <summary>Indicates whether the bit is set.</summary>
-        /// <param name="other">The bit to test.</param>
-        /// <returns>Whether the parameter <paramref name="tag"/> contains the bits of <paramref name="other"/>.</returns>
-        public bool Has(Tag other) => (tag & other) == other;
-
-        /// <summary>Gets the enumeration of methods to patch.</summary>
-        /// <returns>The enumerator responsible for getting the methods that need to be patched.</returns>
-        public Enumerator GetEnumerator() => new(tag);
-
         /// <summary>Converts the <see cref="Tag"/> into a <see cref="Plant.PlantTag"/>.</summary>
         /// <returns>
         /// The <see cref="Plant.PlantTag"/> with values set by the parameter <paramref name="tag"/>.
         /// This conversion is lossy.
         /// </returns>
-        public Plant.PlantTag ToPlantTag() =>
+        public Plant.PlantTag ToPlantTag =>
             new()
             {
                 flyingPlant = tag.Has(Tag.Fly),
@@ -99,5 +89,14 @@ public static class TagExtensions
                 icePlant = tag.Has(Tag.Ice),
                 firePlant = tag.Has(Tag.Fire),
             };
+
+        /// <summary>Indicates whether the bit is set.</summary>
+        /// <param name="other">The bit to test.</param>
+        /// <returns>Whether the parameter <paramref name="tag"/> contains the bits of <paramref name="other"/>.</returns>
+        public bool Has(Tag other) => (tag & other) == other;
+
+        /// <summary>Gets the enumeration of methods to patch.</summary>
+        /// <returns>The enumerator responsible for getting the methods that need to be patched.</returns>
+        public Enumerator GetEnumerator() => new(tag);
     }
 }

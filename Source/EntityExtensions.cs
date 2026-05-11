@@ -125,8 +125,12 @@ public static class EntityExtensions
     extension(CreateParticle)
     {
         /// <summary>Alternative signature for <see cref="CreateParticle.SetParticle"/>.</summary>
-        public static GameObject
-            SetParticle(ParticleType theParticleType, Vector3 position, int row, bool setLayer = true) =>
+        public static GameObject SetParticle(
+            ParticleType theParticleType,
+            Vector3 position,
+            int row,
+            bool setLayer = true
+        ) =>
             CreateParticle.SetParticle((int)theParticleType, position, row, setLayer);
     }
 
@@ -255,7 +259,7 @@ public static class EntityExtensions
         /// </typeparam>
         /// <param name="suffix">The suffix of the requested resource.</param>
         /// <returns></returns>
-        internal T? GetManifestResource<T>(string suffix)
+        public T? GetManifestResource<T>(string suffix)
             where T : class
         {
             string? name;
