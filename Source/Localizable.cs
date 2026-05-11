@@ -3,9 +3,11 @@
 namespace Metachromasia;
 
 using Chars = ReadOnlySpan<char>;
-using Patches = IReadOnlyCollection<Func<Patch>>;
 
-public abstract partial class Localizable<TPlugin>(params Patches patches) : MelonMod
+/// <summary>A mod capable of localization.</summary>
+/// <param name="patches">The list of patches.</param>
+/// <typeparam name="TPlugin">The type inheriting this class.</typeparam>
+public abstract partial class Localizable<TPlugin>(params IReadOnlyCollection<Func<Patch>> patches) : MelonMod
     where TPlugin : Localizable<TPlugin>
 {
     static string? s_loc;
@@ -32,6 +34,8 @@ public abstract partial class Localizable<TPlugin>(params Patches patches) : Mel
         x.sortAtRoot = true;
     }
 
+    /// <summary>Gets the harmony instance for this assembly.</summary>
+    /// <returns>The harmony instance.</returns>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public static HarmonyLib.Harmony? GetHarmony()
     {
@@ -42,14 +46,10 @@ public abstract partial class Localizable<TPlugin>(params Patches patches) : Mel
         return null;
     }
 
-    [return: NotNullIfNotNull(nameof(predicate))]
-    public static Il2CppSystem.Predicate<T>? ToIl2Cpp<T>(Predicate<T> predicate)
-    {
-        var ret = DelegateSupport.ConvertDelegate<Il2CppSystem.Predicate<T>>(predicate);
-        Debug.Assert(predicate is null || ret is not null);
-        return ret;
-    }
-
+    /// <summary>Localizes a string.</summary>
+    /// <param name="raw">The key.</param>
+    /// <param name="fallback">The string to use as fallback.</param>
+    /// <returns>The localized string.</returns>
     public static Chars Localize(string raw, string? fallback = null) =>
         MelonPreferences.GetEntryValue<string?>("PvZ_Fusion_Translator", "Language") is { } language &&
         Find(raw, language, out var first) ? first :
@@ -110,6 +110,11 @@ public abstract partial class Localizable<TPlugin>(params Patches patches) : Mel
         }
     }
 
+    /// <summary>Finds the substring containing the localized string.</summary>
+    /// <param name="raw">The key to search.</param>
+    /// <param name="preference">The preferred language to prioritize.</param>
+    /// <param name="text">Set to the localized string.</param>
+    /// <returns>Whether a localized string was found.</returns>
     static bool Find(string? raw, string? preference, out Chars text)
     {
         const char Start = '{', End = '}', Separator = '.';
@@ -127,6 +132,11 @@ public abstract partial class Localizable<TPlugin>(params Patches patches) : Mel
         return false;
     }
 
+    /// <summary>Splits the substring into before and after the desired character..</summary>
+    /// <param name="text">The text to split.</param>
+    /// <param name="separator">The separator to find.</param>
+    /// <param name="after">The substring containing the value after the first separator.</param>
+    /// <returns>The substring containing the value before the first separator.</returns>
     static Chars SplitBy(scoped in Chars text, char separator, out Chars after)
     {
         if (text.IndexOf(separator) is var i && (i is -1 || i + 1 == text.Length))

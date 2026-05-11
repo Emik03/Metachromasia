@@ -6,6 +6,12 @@ using static OpCodes;
 
 public abstract partial class Localizable<TPlugin>
 {
+    /// <summary>Creates a postfix.</summary>
+    /// <typeparam name="TInstance">The type of instance, or <see cref="ValueTuple"/> for static methods.</typeparam>
+    /// <param name="target">The method to postfix.</param>
+    /// <param name="impl">The postfix method.</param>
+    /// <param name="line">Used as part of the generated method name to make it easier to locate to source.</param>
+    /// <returns>The postfix.</returns>
     public static Func<Patch> Postfix<TInstance>(
         Expression<Func<TInstance, Action>> target,
         Signatures.ActPatch<TInstance> impl,
@@ -13,6 +19,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Postfix<TInstance, T>(
         Expression<Func<TInstance, Action<T>>> target,
         Signatures.ActPatch<TInstance, T> impl,
@@ -20,6 +27,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Postfix<TInstance, T1, T2>(
         Expression<Func<TInstance, Action<T1, T2>>> target,
         Signatures.ActPatch<TInstance, T1, T2> impl,
@@ -27,6 +35,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Postfix<TInstance, T1, T2, T3>(
         Expression<Func<TInstance, Action<T1, T2, T3>>> target,
         Signatures.ActPatch<TInstance, T1, T2, T3> impl,
@@ -34,6 +43,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Postfix<TInstance, T1, T2, T3, T4>(
         Expression<Func<TInstance, Action<T1, T2, T3, T4>>> target,
         Signatures.ActPatch<TInstance, T1, T2, T3, T4> impl,
@@ -41,6 +51,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Postfix<TInstance, TResult, T>(
         Expression<Func<TInstance, Func<T, TResult>>> target,
         Signatures.ActWithRetPatch<TInstance, TResult, T> impl,
@@ -48,6 +59,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Postfix<TInstance, TResult, T1, T2>(
         Expression<Func<TInstance, Func<T1, T2, TResult>>> target,
         Signatures.ActWithRetPatch<TInstance, TResult, T1, T2> impl,
@@ -55,6 +67,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public static Func<Patch> PostfixDangerous<TInstance, TAccessor, TImpl>(
         Expression<Func<TInstance, TAccessor>> target,
@@ -65,6 +78,12 @@ public abstract partial class Localizable<TPlugin>
         where TImpl : Delegate =>
         Fix(target, impl, line, name: nameof(Postfix));
 
+    /// <summary>Creates a prefix.</summary>
+    /// <typeparam name="TInstance">The type of instance, or <see cref="ValueTuple"/> for static methods.</typeparam>
+    /// <param name="target">The method to prefix.</param>
+    /// <param name="impl">The prefix method.</param>
+    /// <param name="line">Used as part of the generated method name to make it easier to locate to source.</param>
+    /// <returns>The prefix.</returns>
     public static Func<Patch> Prefix<TInstance>(
         Expression<Func<TInstance, Action>> target,
         Signatures.ActPatch<TInstance> impl,
@@ -72,6 +91,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<TInstance>(
         Expression<Func<TInstance, Action>> target,
         Signatures.PredPatch<TInstance> impl,
@@ -79,6 +99,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<TInstance, T>(
         Expression<Func<TInstance, Action<T>>> target,
         Signatures.ActPatch<TInstance, T> impl,
@@ -86,6 +107,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<TInstance, T>(
         Expression<Func<TInstance, Action<T>>> target,
         Signatures.PredPatch<TInstance, T> impl,
@@ -93,6 +115,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<TInstance, T1, T2>(
         Expression<Func<TInstance, Action<T1, T2>>> target,
         Signatures.PredPatch<TInstance, T1, T2> impl,
@@ -100,6 +123,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<TInstance, T1, T2, T3>(
         Expression<Func<TInstance, Action<T1, T2, T3>>> target,
         Signatures.PredPatch<TInstance, T1, T2, T3> impl,
@@ -107,6 +131,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<TInstance, TResult>(
         Expression<Func<TInstance, Func<TResult>>> target,
         Signatures.ActWithRetPatch<TInstance, TResult> impl,
@@ -114,6 +139,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<TInstance, TResult>(
         Expression<Func<TInstance, Func<TResult>>> target,
         Signatures.PredWithRetPatch<TInstance, TResult> impl,
@@ -121,6 +147,7 @@ public abstract partial class Localizable<TPlugin>
     ) =>
         Fix(target, impl, line);
 
+    /// <inheritdoc cref="Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public static Func<Patch> PrefixDangerous<TInstance, TAccessor, TImpl>(
         Expression<Func<TInstance, TAccessor>> target,
@@ -131,6 +158,14 @@ public abstract partial class Localizable<TPlugin>
         where TImpl : Delegate =>
         Fix(target, impl, line, name: nameof(Prefix));
 
+    /// <summary>Raw method for creating a patch.</summary>
+    /// <typeparam name="T">The signature for the implementation.</typeparam>
+    /// <param name="targetEx">The target expression.</param>
+    /// <param name="impl">The implementation.</param>
+    /// <param name="line">The line number.</param>
+    /// <param name="prefix">The added prefix.</param>
+    /// <param name="name">The type of infix.</param>
+    /// <returns>The infix.</returns>
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected static Func<Patch> Fix<T>(
         LambdaExpression targetEx,
@@ -148,12 +183,22 @@ public abstract partial class Localizable<TPlugin>
             return Make(realTarget, impl, prefix, patchType, line);
         };
 
+    /// <summary>Emits the function call.</summary>
+    /// <param name="il">The generator to append instructions to.</param>
+    /// <param name="del">The delegate to call.</param>
+    /// <param name="newParams">The parameters.</param>
     // ReSharper disable once SuggestBaseTypeForParameter
-    static void EmitCall(Delegate del, ILGenerator il, Type[] newParams)
+    static void EmitCall(ILGenerator il, Delegate del, Type[] newParams)
     {
+        var cast = typeof(Il2CppObjectBase).GetMethod(
+            nameof(Il2CppObjectBase.Cast),
+            BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public
+        );
+
         var dParams = del.Method.GetParameters();
         var delType = del.Method.DeclaringType;
         var isStatic = dParams.Length - 1 == newParams.Length;
+        Debug.Assert(cast is not null);
         Debug.Assert(delType is not null);
         RuntimeHelpers.RunClassConstructor(delType.TypeHandle);
 
@@ -185,13 +230,17 @@ public abstract partial class Localizable<TPlugin>
                     il.Emit(LoadIndirectly(p).Debug());
             }
 
-            if (p.IsAssignableTo(typeof(Il2CppObjectBase)) && !ToDeref(newParam).IsAssignableTo(ToDeref(p)))
-                il.Emit(Callvirt.Debug(), EntityExtensions.Cast.MakeGenericMethod(p).Debug());
+            if (typeof(Il2CppObjectBase).IsAssignableFrom(p) && !ToDeref(p).IsAssignableFrom(ToDeref(newParam)))
+                il.Emit(Callvirt.Debug(), cast.MakeGenericMethod(p).Debug());
         }
 
         il.Emit(target is null ? Call.Debug() : Callvirt.Debug(), del.Method.Debug());
     }
 
+    /// <summary>Emits the opcode.</summary>
+    /// <param name="il">The generator to append instructions to.</param>
+    /// <param name="i">The index into <paramref name="opCodes"/>.</param>
+    /// <param name="opCodes">The opcodes.</param>
     static void Emit(ILGenerator il, int i, params ReadOnlySpan<OpCode> opCodes)
     {
         if (opCodes.Length - 1 is var last && i < last)
@@ -200,26 +249,27 @@ public abstract partial class Localizable<TPlugin>
             il.Emit(opCodes[last].Debug(), i.Debug());
     }
 
-    static void Emit<T>(
-        ILGenerator il,
-        T impl,
-        Delegate? prefix,
-        HarmonyPatchType patchType,
-        Type[] newParams
-    )
+    /// <summary>Emits the instructions for calling the method.</summary>
+    /// <typeparam name="T">The type of implementation.</typeparam>
+    /// <param name="il">The generator to append instructions to.</param>
+    /// <param name="impl">The implementation.</param>
+    /// <param name="prefix">The added prefix.</param>
+    /// <param name="patchType">The type of patch.</param>
+    /// <param name="newParams">The new parameters.</param>
+    static void Emit<T>(ILGenerator il, T impl, Delegate? prefix, HarmonyPatchType patchType, Type[] newParams)
         where T : Delegate
     {
         if (prefix is null)
         {
-            EmitCall(impl, il, newParams);
+            EmitCall(il, impl, newParams);
             il.Emit(Ret.Debug());
             return;
         }
 
         var jump = il.DefineLabel();
-        EmitCall(prefix, il, newParams);
+        EmitCall(il, prefix, newParams);
         il.Emit(Brfalse_S.Debug(), jump.Debug());
-        EmitCall(impl, il, newParams);
+        EmitCall(il, impl, newParams);
 
         if (patchType is HarmonyPatchType.Prefix)
         {
@@ -237,6 +287,12 @@ public abstract partial class Localizable<TPlugin>
         il.Emit(Ret.Debug());
     }
 
+    /// <summary>Gets the method that the lambda represents.</summary>
+    /// <exception cref="InvalidOperationException">
+    /// The parameter <paramref name="expression"/>'s method cannot be resolved.
+    /// </exception>
+    /// <param name="expression">The expression to get the method of.</param>
+    /// <returns>The method of the lambda.</returns>
     static MethodInfo Target(LambdaExpression expression) =>
         expression.Body switch
         {
@@ -248,6 +304,10 @@ public abstract partial class Localizable<TPlugin>
             _ => throw new InvalidOperationException(expression.Body.GetType().FullName),
         };
 
+    /// <summary>Gets the overriden target.</summary>
+    /// <param name="signature">The signature.</param>
+    /// <param name="target">The target.</param>
+    /// <returns>The overriden target.</returns>
     static MethodInfo? GetOverridenTarget(MethodBase signature, MethodBase target) =>
         signature.GetParameters()[0]
            .ParameterType.GetMethod(
@@ -263,6 +323,9 @@ public abstract partial class Localizable<TPlugin>
                 null
             );
 
+    /// <summary>Gets the signature of the type.</summary>
+    /// <typeparam name="T">The type to get the signature of.</typeparam>
+    /// <returns>The signature of the type parameter <typeparamref name="T"/>.</returns>
     static MethodInfo SignatureOf<T>()
     {
         const BindingFlags Instance = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -272,6 +335,15 @@ public abstract partial class Localizable<TPlugin>
         return method;
     }
 
+    /// <summary>Creates the patch.</summary>
+    /// <typeparam name="T">The type of implementation.</typeparam>
+    /// <param name="methodBase">The method to patch.</param>
+    /// <param name="impl">The implementation.</param>
+    /// <param name="prefix">The added prefix.</param>
+    /// <param name="patchType">The type of patch.</param>
+    /// <param name="line">The line number of the caller's caller.</param>
+    /// <param name="id">The line number of the caller.</param>
+    /// <returns>The patch.</returns>
     static Patch Make<T>(
         MethodInfo methodBase,
         T impl,
@@ -331,10 +403,19 @@ public abstract partial class Localizable<TPlugin>
         return (methodBase, reflectedType.GetMethods(BindingFlag).Single(x => !x.IsConstructor), patchType);
     }
 
-    static Type ToRef(ParameterInfo x) => x.ParameterType.IsByRef ? x.ParameterType : x.ParameterType.MakeByRefType();
+    /// <summary>Gets the referenced type.</summary>
+    /// <param name="p">The parameter type to make by-reference.</param>
+    /// <returns>The by-referenced type.</returns>
+    static Type ToRef(ParameterInfo p) => p.ParameterType.IsByRef ? p.ParameterType : p.ParameterType.MakeByRefType();
 
+    /// <summary>Gets the non-referenced type.</summary>
+    /// <param name="type">The type to potentially get the underlying type of.</param>
+    /// <returns>The non-referenced type.</returns>
     static Type ToDeref(Type type) => type.IsByRef ? type.GetElementType()! : type;
 
+    /// <summary>Gets the load indirect instruction for the respective type.</summary>
+    /// <param name="type">The type to get the load indirect instruction for.</param>
+    /// <returns>The instruction.</returns>
     static OpCode LoadIndirectly(Type type) =>
         (type.IsEnum ? type.GetEnumUnderlyingType() : type) switch
         {

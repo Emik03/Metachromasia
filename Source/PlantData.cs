@@ -1,20 +1,32 @@
 // SPDX-License-Identifier: MPL-2.0
-// ReSharper disable once CheckNamespace
 namespace Metachromasia;
 
 using Fusions = IReadOnlyCollection<(PlantType, PlantType)>;
 using Interface = IReadOnlyDictionary<string, Action<GameObject>>;
 
+/// <summary>Represents plant metadata, alongisde registration overrides.</summary>
+/// <param name="Id">The <see cref="PlantType"/> id of the plant.</param>
+/// <param name="AddSeedSlot">Whether to always add itself in the seed selection page.</param>
+/// <param name="Tag">The attributes of the plant.</param>
+/// <param name="Fusions">The ingredients necessary to create this plant.</param>
 public sealed record PlantData(int Id, bool AddSeedSlot = false, Tag Tag = default, params Fusions Fusions) : Interface
 {
+    /// <summary>Contains all the assets.</summary>
+    static readonly Dictionary<Assembly, IReadOnlyList<Object>> s_assets = [];
+
+    /// <summary>Contains the registered callbacks.</summary>
     readonly Dictionary<string, Action<GameObject>> _dictionary = [with(StringComparer.Ordinal)];
 
+    /// <inheritdoc />
     public PlantData(int id, params Fusions fusions)
         : this(id, false, default, fusions) { }
 
+    /// <inheritdoc />
     public PlantData(int id, Tag tag, params Fusions fusions)
         : this(id, false, tag, fusions) { }
 
+    /// <summary>Contains callbacks for registration.</summary>
+    /// <param name="name">The name of the game object.</param>
     public Action<GameObject> this[string name]
     {
         get => _dictionary[name];
@@ -32,40 +44,46 @@ public sealed record PlantData(int Id, bool AddSeedSlot = false, Tag Tag = defau
     /// <inheritdoc />
     IEnumerable<Action<GameObject>> Interface.Values => _dictionary.Values;
 
+    /// <summary>Gets or sets whether to stop this plant from being used in Adventure mode.</summary>
     public bool NoAdventure { get; init; }
 
-    /// <summary>The damage of the plant.</summary>
+    /// <summary>Gets or sets the damage of the plant.</summary>
     /// <remarks><para>In older versions: <c>attackDamage</c></para></remarks>
     public required int Damage { get; init; }
 
+    /// <summary>Gets or sets the value that corresponds to <see cref="Plant.attributeCount"/>.</summary>
     public int AttributeCount { get; [UsedImplicitly] init; }
 
-    /// <summary>The max health of the plant.</summary>
+    /// <summary>Gets or sets the maximum health of the plant.</summary>
     /// <remarks><para>In older versions: <c>field_Public_Int32_0</c></para></remarks>
     public int Health { get; [UsedImplicitly] init; } = 300;
 
-    /// <summary>The price in Sun for the card that places this plant.</summary>
+    /// <summary>Gets or sets the price in Sun for the card that places this plant.</summary>
     /// <remarks><para>In older versions: <c>field_Public_Int32_1</c></para></remarks>
     public int Price { get; [UsedImplicitly] init; } = 1000;
 
-    /// <summary>The rate of attack.</summary>
+    /// <summary>Gets or sets the rate of attack.</summary>
     /// <remarks><para>In older versions: <c>field_Public_Single_0</c></para></remarks>
     public float AttackInterval { get; [UsedImplicitly] init; } = 1;
 
-    /// <summary>The cooldown for the card that places this plant.</summary>
+    /// <summary>Gets or sets the cooldown for the card that places this plant.</summary>
     /// <remarks><para>In older versions: <c>field_Public_Single_2</c></para></remarks>
     public float Cooldown { get; [UsedImplicitly] init; } = 60;
 
-    /// <summary>The rate of production.</summary>
+    /// <summary>Gets or sets the rate of production.</summary>
     /// <remarks><para>In older versions: <c>field_Public_Single_1</c></para></remarks>
     public float ProductionInterval { get; [UsedImplicitly] init; } = 1;
 
+    /// <summary>Gets or sets the prefix of all game object names to trim out.</summary>
     public string? Prefix { get; init; }
 
     /// <summary>The id of this plant.</summary>
     /// <remarks><para>In older versions: <c>field_Public_PlantType_0</c></para></remarks>
     public PlantType Type => (PlantType)Id;
 
+    /// <summary>Converts this instance to the <see cref="PlantDataManager.PlantData"/>.</summary>
+    /// <param name="data">The instance to convert.</param>
+    /// <returns>The converted <see cref="PlantDataManager.PlantData"/>.</returns>
     public static explicit operator PlantDataManager.PlantData(PlantData data) =>
         new()
         {
@@ -111,8 +129,13 @@ public sealed record PlantData(int Id, bool AddSeedSlot = false, Tag Tag = defau
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    static readonly Dictionary<Assembly, IReadOnlyList<Object>> s_assets = [];
-
+    /// <summary>Gets the embedded bundle.</summary>
+    /// <exception cref="InvalidOperationException">
+    /// The assembly that the type parameter <typeparamref name="TPlugin"/> comes
+    /// from does not contain the expected bundle as an embedded resource.
+    /// </exception>
+    /// <typeparam name="TPlugin">The type of plugin to get the bundle from.</typeparam>
+    /// <returns>The embedded bundle.</returns>
     static byte[] GetEmbeddedBundle<TPlugin>() =>
         $"{typeof(TPlugin).Assembly.GetName().Name}.bundle".Debug() is var name &&
         typeof(TPlugin).GetManifestResource<byte[]>(name) is { } bytes

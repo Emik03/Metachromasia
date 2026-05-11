@@ -1,9 +1,5 @@
 // SPDX-License-Identifier: MPL-2.0
-
-// ReSharper disable once CheckNamespace
 namespace Metachromasia;
-
-using Patches = IReadOnlyCollection<Func<Patch>>;
 
 /// <summary>A class responsible for registering one modded plant.</summary>
 /// <remarks><para>Multiple plants have to be registered using separate classes.</para></remarks>
@@ -65,7 +61,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
     /// </summary>
     /// <param name="p">The plant data.</param>
     /// <param name="h">The patches.</param>
-    protected PlantInjector(PlantData p, params Patches h)
+    protected PlantInjector(PlantData p, params IReadOnlyCollection<Func<Patch>> h)
         : this(p, null, null, h) { }
 
     /// <summary>
@@ -74,7 +70,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
     /// <param name="p">The plant data.</param>
     /// <param name="s">The buffs.</param>
     /// <param name="h">The patches.</param>
-    protected PlantInjector(PlantData p, IReadOnlyList<string>? s = null, params Patches h)
+    protected PlantInjector(PlantData p, IReadOnlyList<string>? s = null, params IReadOnlyCollection<Func<Patch>> h)
         : this(p, s, null, h) { }
 
     /// <summary>
@@ -87,7 +83,12 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
     /// If specified, these override the existing <see cref="AdvBuff"/>.
     /// </param>
     /// <param name="h">The patches.</param>
-    protected PlantInjector(PlantData p, IReadOnlyList<string>? s = null, int? i = null, params Patches h)
+    protected PlantInjector(
+        PlantData p,
+        IReadOnlyList<string>? s = null,
+        int? i = null,
+        params IReadOnlyCollection<Func<Patch>> h
+    )
         : base(h) =>
         (Plant, _plant, s_buffs, s_buffIndex) = (p, p, s, i);
 
@@ -390,10 +391,14 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         _ = Plant.NoAdventure && harmony.Patch(createPlant, postfix: new(((Delegate)LimTravel).Method)) is var _;
     }
 
+    /// <summary>Adds the feature flag to the list of cheat codes.</summary>
+    /// <param name="__instance">The list of cheat codes.</param>
     // ReSharper disable InconsistentNaming
     static void AddOutOfTheBox(CheatKey __instance) =>
         __instance.CheatKeys.TryAdd(Box.ToLowerInvariant(), (Action)ToggleOutOfTheBox);
 
+    /// <summary>Adds this plant to the almanac.</summary>
+    /// <param name="__instance">The almanac to mutate.</param>
     static void AddPlantMenu(AlmanacPlantMenu __instance)
     {
         const string Size = "<size=36>";
@@ -415,6 +420,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             );
     }
 
+    /// <summary>Registers the plant.</summary>
     static void Load()
     {
         const BindingFlags Flags = BindingFlags.Instance | BindingFlags.Public;
@@ -433,18 +439,25 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
                 ProcessGameObject(go, Plant.Prefix);
 
         foreach (var (l, r) in Plant.Fusions)
-        {
-            var inversion = r <= PlantType.Nothing;
-            var result = inversion ? ~r : Plant.Type;
-            var ingredient = inversion ? Plant.Type : r;
-            MixData.AddRecipe(l, ingredient, result);
-        }
+            switch (l, r)
+            {
+                case (<= PlantType.Nothing, <= PlantType.Nothing):
+                    throw new InvalidOperationException($"Both ingredients cannot be inverted: {l}, {r}");
+                case (<= PlantType.Nothing, _):
+                    MixData.AddRecipe(Plant.Type, r, l);
+                    break;
+                case (_, <= PlantType.Nothing):
+                    MixData.AddRecipe(l, Plant.Type, r);
+                    break;
+                default:
+                    MixData.AddRecipe(l, r, Plant.Type);
+                    break;
+            }
 
         if (Bullet is not BulletType.Bullet_pea &&
             typeof(Shooter).IsAssignableFrom(typeof(TPlant)) &&
-            GetHarmony() is { } harmony &&
             typeof(TPlant).GetMethod(nameof(Shooter.GetBulletType), Flags) is var shooter)
-            harmony.Patch(shooter, new(((Delegate)GetBulletType).Method));
+            GetHarmony()?.Patch(shooter, new(((Delegate)GetBulletType).Method));
 
         if (s_buffs is not { Count: 0 })
             return;
@@ -458,6 +471,9 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             TravelMgr.AdvBuffData[(AdvBuff)i] = new ModdedBuff(i, Localize(e.Current).ToString());
     }
 
+    /// <summary>Processes the game object.</summary>
+    /// <param name="go">The game object.</param>
+    /// <param name="prefix">The prefix to trim out of the game object name.</param>
     static void ProcessGameObject(GameObject go, string? prefix)
     {
         prefix ??= typeof(TPlugin).Name is null or "Plugin"
@@ -494,6 +510,10 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             }
     }
 
+    /// <summary>Adds the element to the dictionary.</summary>
+    /// <typeparam name="T">The type of value.</typeparam>
+    /// <param name="dictionary">The dictionary to mutate.</param>
+    /// <param name="value">The value to add onto the parameter <paramref name="dictionary"/>.</param>
     static void Add<T>(
         Il2CppSystem.Collections.Generic.Dictionary<PlantType, Il2CppSystem.Collections.Generic.List<T>> dictionary,
         T value
@@ -503,12 +523,16 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         v.Add(value);
     }
 
+    /// <summary>Registers the preview.</summary>
+    /// <param name="go">The <see cref="GameObject"/> to register.</param>
     static void RegisterPreview(GameObject go)
     {
         go.tag = "Preview";
         Add(GameAPP.resourcesManager._plantPreviews, go);
     }
 
+    /// <summary>Registers the prefab.</summary>
+    /// <param name="go">The <see cref="GameObject"/> to register.</param>
     static void RegisterPrefab(GameObject go)
     {
         const string Shadow = nameof(Shadow);
@@ -536,6 +560,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         Add(GameAPP.resourcesManager._plantPrefabs, go);
     }
 
+    /// <summary>Toggles the feature flag.</summary>
     static void ToggleOutOfTheBox()
     {
         Debug.Assert(s_box is not null);
@@ -544,6 +569,8 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         InGameText.Instance.ShowText(text, 5);
     }
 
+    /// <summary>Adds the seed slot.</summary>
+    /// <param name="__instance">The instance managing seed slots.</param>
     static void AddSeedSlot(SeedLibrary __instance)
     {
         if (s_box is not { Value: true } && !Plant.AddSeedSlot)
@@ -587,7 +614,10 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         newSeed.transform.SetParent(head, false);
     }
 
-    static void LimTravel(ref bool __result, ref PlantType theSeedType)
+    /// <summary>Restricts placement of the plant if in adventure mode.</summary>
+    /// <param name="theSeedType">The plant type to check.</param>
+    /// <param name="__result">The return value for the hook.</param>
+    static void LimTravel(ref PlantType theSeedType, ref bool __result)
     {
         if (theSeedType != Plant.Type)
             return;
@@ -602,6 +632,10 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         InGameText.Instance.ShowText(Localize("NoAdventure").ToString(), 4);
     }
 
+    /// <summary>Gets the bullet type.</summary>
+    /// <param name="__instance">The instance to match.</param>
+    /// <param name="__result">The return value for the hook.</param>
+    /// <returns>The bullet type.</returns>
     static bool GetBulletType(Shooter __instance, ref BulletType __result)
     {
         if (!Matches(__instance))

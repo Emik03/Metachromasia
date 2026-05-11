@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MPL-2.0
-// ReSharper disable once CheckNamespace
 namespace Metachromasia;
 
 public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharper disable InconsistentNaming
@@ -9,23 +8,26 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     /// <param name="result">The resulting value to assign to.</param>
     /// <param name="value">The value to assign the parameter <paramref name="result"/> to.</param>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public static void MatchCard(PlantType plant, ref CardLevel result, CardLevel value = CardLevel.Red)
-    {
-        if (Plant.Type == plant)
-            result = value;
-    }
+    public static void MatchCard(PlantType plant, ref CardLevel result, CardLevel value = CardLevel.Red) =>
+        _ = Plant.Type == plant && (result = value) is var _;
 
+    /// <summary>Sets whether the plant type matches.</summary>
+    /// <param name="__0">The plant to check.</param>
+    /// <param name="__result">The resulting value to assign to.</param>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static void MatchThisPlant(Plant __0, ref bool __result) =>
         MatchThisPlantType(__0.thePlantType, ref __result);
 
+    /// <summary>Sets whether the plant type matches.</summary>
+    /// <param name="__0">The plant type to check.</param>
+    /// <param name="__result">The resulting value to assign to.</param>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public static void MatchThisPlantType(PlantType __0, ref bool __result)
-    {
-        if (__0 == Plant.Type)
-            __result = true;
-    }
+    public static void MatchThisPlantType(PlantType __0, ref bool __result) =>
+        _ = __0 == Plant.Type && (__result = true);
 
+    /// <summary>Determines whether both the zombie and the plant share the same row.</summary>
+    /// <param name="__instance">The zombie.</param>
+    /// <param name="__0">The plant.</param>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static bool ArgCollidesTPlant<TZombie>(Object __instance, Object __0)
         where TZombie : Zombie =>
@@ -36,27 +38,51 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
         Matches(plant) &&
         plantRow == zombieRow;
 
+    /// <summary>Determines whether the object is the plant.</summary>
+    /// <typeparam name="T">The type of instance.</typeparam>
+    /// <param name="__instance">The instance.</param>
+    /// <param name="__0">The object to test.</param>
+    /// <returns></returns>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static bool IsAnyThenTPlant<T>(T __instance, Object __0) => IsTPlant(__0);
 
+    /// <summary>Determines whether the zombie is of a certain type, and the plant represents this class.</summary>
+    /// <typeparam name="TZombie">The type of zombie.</typeparam>
+    /// <param name="__instance">The zombie to check for its type.</param>
+    /// <param name="__0">The plant to check.</param>
+    /// <returns>Whether both parameters match.</returns>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static bool IsTThenTPlant<TZombie>(Object __instance, Object __0)
         where TZombie : Zombie =>
         __instance && __instance.TryCast<TZombie>() is not null && IsTPlant(__0);
 
+    /// <summary>Determines whether the zombie is of a certain type, and the plant represents this class.</summary>
+    /// <typeparam name="TZombie">The type of zombie.</typeparam>
+    /// <typeparam name="T">The type of second parameter.</typeparam>
+    /// <param name="__instance">The zombie to check for its type.</param>
+    /// <param name="__result">The unused parameter.</param>
+    /// <param name="__0">The plant to check.</param>
+    /// <returns>Whether both parameters match.</returns>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static bool IsTThenAnyThenTPlant<TZombie, T>(Object __instance, T __result, Object __0)
         where TZombie : Zombie =>
         __instance && __instance.TryCast<TZombie>() is not null && IsTPlant(__0);
 
+    /// <summary>Determines whether the bullet represents this class.</summary>
+    /// <param name="__instance">The bullet to check for its type.</param>
+    /// <returns>Whether the parameter <paramref name="__instance"/> is this class' bullet.</returns>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static bool IsTBullet(Object __instance) =>
         __instance && __instance.TryCast<TBullet>() is { } bullet && Matches(bullet);
 
+    /// <summary>Determines whether the plant represents this class.</summary>
+    /// <param name="__instance">The plant to check for its type.</param>
+    /// <returns>Whether the parameter <paramref name="__instance"/> is this class' plant.</returns>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static bool IsTPlant(Object __instance) =>
         __instance && __instance.TryCast<TPlant>() is { } plant && Matches(plant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Postfix(
         Expression<Func<TPlant, Action>> target,
         Signatures.ActPatch<TPlant> impl,
@@ -64,6 +90,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Postfix<T>(
         Expression<Func<TBullet, Action<T>>> target,
         Signatures.ActPatch<TBullet, T> impl,
@@ -71,6 +98,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTBullet);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Postfix<T>(
         Expression<Func<TPlant, Action<T>>> target,
         Signatures.ActPatch<TPlant, T> impl,
@@ -78,6 +106,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Postfix<TResult>(
         Expression<Func<TPlant, Func<TResult>>> target,
         Signatures.ActWithRetPatch<TPlant, TResult> impl,
@@ -85,6 +114,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Postfix<TZombie>(
         Expression<Func<TZombie, Action<Plant>>> target,
         Signatures.ActPatch<TZombie, TPlant> impl,
@@ -93,6 +123,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
         where TZombie : Zombie =>
         Fix(target, impl, line, IsTThenTPlant<TZombie>);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix(
         Expression<Func<TBullet, Action>> target,
         Signatures.ActPatch<TBullet> impl,
@@ -100,6 +131,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTBullet);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix(
         Expression<Func<TPlant, Action>> target,
         Signatures.PredPatch<TPlant> impl,
@@ -107,6 +139,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix(
         Expression<Func<TPlant, Action>> target,
         Signatures.ActPatch<TPlant> impl,
@@ -114,6 +147,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix(
         Expression<Func<TBullet, Action<Zombie>>> target,
         Signatures.ActPatch<TBullet, Zombie> impl,
@@ -121,6 +155,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTBullet);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<TZombie>(
         Expression<Func<TZombie, Action<Collider2D>>> target,
         Signatures.ActPatch<TZombie, Collider2D> impl,
@@ -129,6 +164,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
         where TZombie : Zombie =>
         Fix(target, impl, line, ArgCollidesTPlant<TZombie>);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<T>(
         Expression<Func<TBullet, Action<T>>> target,
         Signatures.ActPatch<TBullet, T> impl,
@@ -136,6 +172,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTBullet);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<T>(
         Expression<Func<TPlant, Action<T>>> target,
         Signatures.ActPatch<TPlant, T> impl,
@@ -143,6 +180,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<T>(
         Expression<Func<TPlant, Action<T>>> target,
         Signatures.PredPatch<TPlant, T> impl,
@@ -150,6 +188,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<T>(
         Expression<Func<T, Action<Plant>>> target,
         Signatures.ActPatch<T, TPlant> impl,
@@ -157,6 +196,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsAnyThenTPlant<T>);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<T1, T2>(
         Expression<Func<TBullet, Action<T1, T2>>> target,
         Signatures.ActPatch<TBullet, T1, T2> impl,
@@ -164,6 +204,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTBullet);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<T1, T2>(
         Expression<Func<TPlant, Action<T1, T2>>> target,
         Signatures.ActPatch<TPlant, T1, T2> impl,
@@ -171,6 +212,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<T1, T2>(
         Expression<Func<TPlant, Action<T1, T2>>> target,
         Signatures.PredPatch<TPlant, T1, T2> impl,
@@ -178,6 +220,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<T1, T2, T3>(
         Expression<Func<TPlant, Action<T1, T2, T3>>> target,
         Signatures.ActPatch<TPlant, T1, T2, T3> impl,
@@ -185,6 +228,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<T1, T2, T3, T4>(
         Expression<Func<TPlant, Action<T1, T2, T3, T4>>> target,
         Signatures.ActPatch<TPlant, T1, T2, T3, T4> impl,
@@ -192,6 +236,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<TResult>(
         Expression<Func<TPlant, Func<TResult>>> target,
         Signatures.ActWithRetPatch<TPlant, TResult> impl,
@@ -199,6 +244,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<TZombie, TResult>(
         Expression<Func<TZombie, Func<Plant, TResult>>> target,
         Signatures.ActWithRetPatch<TZombie, TResult, TPlant> impl,
@@ -207,6 +253,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
         where TZombie : Zombie =>
         Fix(target, impl, line, IsTThenAnyThenTPlant<TZombie, TResult>);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<TResult, T1, T2>(
         Expression<Func<TPlant, Func<T1, T2, TResult>>> target,
         Signatures.ActWithRetPatch<TPlant, TResult, T1, T2> impl,
@@ -214,6 +261,12 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <summary>Gets the appropriate matcher.</summary>
+    /// <exception cref="InvalidOperationException">
+    /// The first parameter of the parameter <paramref name="d"/> is not handled.
+    /// </exception>
+    /// <param name="d">The type of signature to check.</param>
+    /// <returns>The matcher.</returns>
     static Delegate GetMatcher(Delegate d) =>
         d.Method.GetParameters()[0].ParameterType switch
         {
