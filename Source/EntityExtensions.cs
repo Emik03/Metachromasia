@@ -189,6 +189,10 @@ public static class EntityExtensions
             b.rb.velocity = new(1.5f, 0);
         }
 
+        /// <summary>Damages the plant.</summary>
+        /// <param name="damage">The amount of damage to apply.</param>
+        public void TakeDamage(int damage) => plant.TakeDamage(damage, null);
+
         /// <summary>Shoots a bullet.</summary>
         /// <param name="bulletType">The bullet type.</param>
         /// <param name="damage">The damage of the bullet.</param>
@@ -321,8 +325,13 @@ public static class EntityExtensions
 
     extension(Zombie zombie)
     {
+        /// <summary>Damages the zombie.</summary>
+        /// <param name="damageType">The type of damage.</param>
+        /// <param name="damage">The amount of damage to apply.</param>
+        public void TakeDamage(DamageType damageType, int damage) => zombie.TakeDamage(damage, null, damageType);
+
         /// <summary>Pushes back the zombie.</summary>
-        /// <returns>The value <see langword="true"/>.</returns>
+        /// <returns>The value <see langword="false"/>.</returns>
         public bool PushBack()
         {
             if (TypeMgr.IsDriverZombie(zombie.theZombieType) || TypeMgr.IsBossZombie(zombie.theZombieType))

@@ -33,6 +33,7 @@ global using IEnumerator = System.Collections.IEnumerator;
 global using ILGenerator = System.Reflection.Emit.ILGenerator;
 global using IList = System.Collections.IList;
 global using Image = UnityEngine.UI.Image;
+global using InGameText = Il2CppCore.InGameText;
 global using InvalidOperationException = System.InvalidOperationException;
 global using LambdaExpression = System.Linq.Expressions.LambdaExpression;
 global using LayerMask = core::UnityEngine.LayerMask;
