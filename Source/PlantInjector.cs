@@ -95,7 +95,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
     /// <summary>Contains the index in <see cref="GameAPP.itemPrefab"/> of the registered item, if any.</summary>
     public static int Item { get; private set; }
 
-    /// <summary>Contains the starting buff index used for <see cref="Lawnf.TravelAdvanced"/>, if any.</summary>
+    /// <summary>Contains the starting buff index used for <see cref="Il2Cpp.Lawnf.TravelAdvanced"/>, if any.</summary>
     public static int Travel { get; [UsedImplicitly] private set; }
 
     /// <summary>Contains the implicitly registered <see cref="BulletType"/>.</summary>
@@ -442,10 +442,10 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
                 case (<= PlantType.Nothing, <= PlantType.Nothing):
                     throw new InvalidOperationException($"Both ingredients cannot be inverted: {l}, {r}");
                 case (<= PlantType.Nothing, _):
-                    MixData.AddRecipe(Plant.Type, r, l);
+                    MixData.AddRecipe(Plant.Type, r, ~l);
                     break;
                 case (_, <= PlantType.Nothing):
-                    MixData.AddRecipe(l, Plant.Type, r);
+                    MixData.AddRecipe(l, Plant.Type, ~r);
                     break;
                 default:
                     MixData.AddRecipe(l, r, Plant.Type);
