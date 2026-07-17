@@ -90,6 +90,10 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     ) =>
         Fix(target, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
+    public static Func<Patch> PostfixDamage(Signatures.ActTakeDamage<TPlant> impl, [CallerLineNumber] int line = 0) =>
+        Fix((Plant plant) => plant.TakeDamage, impl, line, IsTPlant);
+
     /// <inheritdoc cref="Localizable{TPlugin}.Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Postfix<T>(
         Expression<Func<TBullet, Action<T>>> target,
@@ -154,6 +158,14 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
         [CallerLineNumber] int line = 0
     ) =>
         Fix(target, impl, line, IsTBullet);
+
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
+    public static Func<Patch> PrefixDamage(Signatures.ActTakeDamage<TPlant> impl, [CallerLineNumber] int line = 0) =>
+        Fix((Plant plant) => plant.TakeDamage, impl, line, IsTPlant);
+
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
+    public static Func<Patch> PrefixDamage(Signatures.PredTakeDamage<TPlant> impl, [CallerLineNumber] int line = 0) =>
+        Fix((Plant plant) => plant.TakeDamage, impl, line, IsTPlant);
 
     /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<TZombie>(

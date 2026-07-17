@@ -103,4 +103,26 @@ public static class Signatures // ReSharper disable InconsistentNaming
     /// <typeparam name="T0">The type of the first parameter.</typeparam>
     /// <typeparam name="T1">The type of the second parameter.</typeparam>
     public delegate bool PredWithRetPatch<in T, TR, T0, T1>(T __instance, ref TR __result, ref T0 __0, ref T1 __1);
+
+    /// <summary>Delegate for <see cref="Plant.TakeDamage"/>.</summary>
+    public delegate void ActTakeDamage<in T>(
+        T __instance,
+        ref int __0,
+        ref IDamageMaker __1,
+        ref DamageType __2,
+        ref PlantType __3,
+        ref bool __4
+    )
+        where T : Plant;
+
+    /// <summary>Delegate for <see cref="Plant.TakeDamage"/>.</summary>
+    public delegate bool PredTakeDamage<in T>(
+        T __instance,
+        ref int __0,
+        ref IDamageMaker __1,
+        ref DamageType __2,
+        ref PlantType __3,
+        ref bool __4
+    )
+        where T : Plant;
 }
