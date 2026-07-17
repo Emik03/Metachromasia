@@ -360,7 +360,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         s_box = category.GetEntry<bool>(Box) ?? category.CreateEntry(Box, false);
 
         if (Enum.IsDefined(Plant.Type))
-            LoggerInstance?.Error("Plant type conflict: {PlantType} ({PlantId})", Plant.Type, Plant.Id);
+            LoggerInstance?.Error($"Plant type conflict: {Plant.Type} ({Plant.Id})");
     }
 
     /// <inheritdoc />
