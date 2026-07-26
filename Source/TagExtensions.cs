@@ -62,6 +62,11 @@ public static class TagExtensions
 
     extension(Tag tag)
     {
+        /// <summary>Indicates whether the bit is set.</summary>
+        /// <param name="other">The bit to test.</param>
+        /// <returns>Whether the parameter <paramref name="tag"/> contains the bits of <paramref name="other"/>.</returns>
+        public bool this[Tag other] => (tag & other) == other;
+
         /// <summary>Converts the <see cref="Tag"/> into a <see cref="Plant.PlantTag"/>.</summary>
         /// <returns>
         /// The <see cref="Plant.PlantTag"/> with values set by the parameter <paramref name="tag"/>.
@@ -70,30 +75,25 @@ public static class TagExtensions
         public Plant.PlantTag ToPlantTag =>
             new()
             {
-                flyingPlant = tag.Has(Tag.Fly),
-                hardLandPlant = tag.Has(Tag.HardLand),
-                waterPlant = tag.Has(Tag.Water),
-                pumpkinPlant = tag.Has(Tag.Pumpkin),
-                lanternPlant = tag.Has(Tag.Lantern),
-                smallLanternPlant = tag.Has(Tag.SmallLantern),
-                puffPlant = tag.Has(Tag.Puff),
-                nutPlant = tag.Has(Tag.Nut),
-                tallNutPlant = tag.Has(Tag.TallNut),
-                potatoPlant = tag.Has(Tag.Potato),
-                caltropPlant = tag.Has(Tag.Caltrop),
-                tanglekelpPlant = tag.Has(Tag.TangleKelp),
-                magnetPlant = tag.Has(Tag.Magnet),
-                potPlant = tag.Has(Tag.Pot),
-                doubleBoxPlant = tag.Has(Tag.Double),
-                spickRockPlant = tag.Has(Tag.SpikeRock),
-                icePlant = tag.Has(Tag.Ice),
-                firePlant = tag.Has(Tag.Fire),
+                flyingPlant = tag[Tag.Fly],
+                hardLandPlant = tag[Tag.HardLand],
+                waterPlant = tag[Tag.Water],
+                pumpkinPlant = tag[Tag.Pumpkin],
+                lanternPlant = tag[Tag.Lantern],
+                smallLanternPlant = tag[Tag.SmallLantern],
+                puffPlant = tag[Tag.Puff],
+                nutPlant = tag[Tag.Nut],
+                tallNutPlant = tag[Tag.TallNut],
+                potatoPlant = tag[Tag.Potato],
+                caltropPlant = tag[Tag.Caltrop],
+                tanglekelpPlant = tag[Tag.TangleKelp],
+                magnetPlant = tag[Tag.Magnet],
+                potPlant = tag[Tag.Pot],
+                doubleBoxPlant = tag[Tag.Double],
+                spickRockPlant = tag[Tag.SpikeRock],
+                icePlant = tag[Tag.Ice],
+                firePlant = tag[Tag.Fire],
             };
-
-        /// <summary>Indicates whether the bit is set.</summary>
-        /// <param name="other">The bit to test.</param>
-        /// <returns>Whether the parameter <paramref name="tag"/> contains the bits of <paramref name="other"/>.</returns>
-        public bool Has(Tag other) => (tag & other) == other;
 
         /// <summary>Gets the enumeration of methods to patch.</summary>
         /// <returns>The enumerator responsible for getting the methods that need to be patched.</returns>

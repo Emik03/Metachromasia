@@ -427,7 +427,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             return;
 
         GameAPP.resourcesManager.allPlants.Add(Plant.Type);
-        _ = Plant.Tag.Has(Tag.AntiCrush) && TypeMgr.UncrashablePlants.Add(Plant.Type);
+        _ = Plant.Tag[Tag.AntiCrush] && TypeMgr.UncrashablePlants.Add(Plant.Type);
 
         PlantDataManager.PlantData_Modified[Plant.Type] = PlantDataManager.PlantData_Default[Plant.Type] =
             (PlantDataManager.PlantData)Plant;
