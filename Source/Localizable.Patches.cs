@@ -76,7 +76,7 @@ public abstract partial class Localizable<TPlugin>
     )
         where TAccessor : Delegate
         where TImpl : Delegate =>
-        Fix(target, impl, line, name: nameof(Postfix));
+        Fix(target, impl, line, null, nameof(Postfix));
 
     /// <summary>Creates a prefix.</summary>
     /// <typeparam name="TInstance">The type of instance, or <see cref="ValueTuple"/> for static methods.</typeparam>
@@ -156,7 +156,7 @@ public abstract partial class Localizable<TPlugin>
     )
         where TAccessor : Delegate
         where TImpl : Delegate =>
-        Fix(target, impl, line, name: nameof(Prefix));
+        Fix(target, impl, line, null, nameof(Prefix));
 
     /// <summary>Raw method for creating a patch.</summary>
     /// <typeparam name="T">The signature for the implementation.</typeparam>

@@ -94,6 +94,10 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     public static Func<Patch> Postfix(Signatures.ActTakeDamage<TPlant> impl, [CallerLineNumber] int line = 0) =>
         Fix((Plant plant) => plant.TakeDamage, impl, line, IsTPlant);
 
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
+    public static Func<Patch> PostfixZombies(Signatures.ActTakeDamage<Zombie> impl, [CallerLineNumber] int line = 0) =>
+        Fix((Zombie zombie) => zombie.TakeDamage, impl, line, null, nameof(Postfix));
+
     /// <inheritdoc cref="Localizable{TPlugin}.Postfix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Postfix<T>(
         Expression<Func<TBullet, Action<T>>> target,
@@ -166,6 +170,14 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> // ReSharp
     /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix(Signatures.PredTakeDamage<TPlant> impl, [CallerLineNumber] int line = 0) =>
         Fix((Plant plant) => plant.TakeDamage, impl, line, IsTPlant);
+
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
+    public static Func<Patch> PrefixZombies(Signatures.ActTakeDamage<Zombie> impl, [CallerLineNumber] int line = 0) =>
+        Fix((Zombie zombie) => zombie.TakeDamage, impl, line, null, nameof(Prefix));
+
+    /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
+    public static Func<Patch> PrefixZombies(Signatures.PredTakeDamage<Zombie> impl, [CallerLineNumber] int line = 0) =>
+        Fix((Zombie zombie) => zombie.TakeDamage, impl, line, null, nameof(Prefix));
 
     /// <inheritdoc cref="Localizable{TPlugin}.Prefix{TInstance}(Expression{Func{TInstance, Action}}, Signatures.ActPatch{TInstance}, int)"/>
     public static Func<Patch> Prefix<TZombie>(

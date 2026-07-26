@@ -328,7 +328,9 @@ public static class EntityExtensions
         /// <summary>Damages the zombie.</summary>
         /// <param name="damageType">The type of damage.</param>
         /// <param name="damage">The amount of damage to apply.</param>
-        public void TakeDamage(DamageType damageType, int damage) => zombie.TakeDamage(damage, null, damageType);
+        /// <param name="fix">Optional parameter.</param>
+        public void TakeDamage(DamageType damageType, int damage, bool fix = false) =>
+            zombie.TakeDamage(damage, null, damageType, PlantType.Nothing, fix);
 
         /// <summary>Pushes back the zombie.</summary>
         /// <returns>The value <see langword="false"/>.</returns>

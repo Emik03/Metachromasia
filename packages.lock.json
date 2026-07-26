@@ -93,12 +93,6 @@
           "JetBrains.Annotations": "2021.1.0"
         }
       },
-      "Microsoft.CodeAnalysis.Analyzers": {
-        "type": "Direct",
-        "requested": "[5.6.0, )",
-        "resolved": "5.6.0",
-        "contentHash": "30ffAcvc+M4xXFN06dg2bKyH5eXgJQmyuB5H5cpC47559rQV5x7vZRyyC/YakNLQtBG3IdW/ZAyLCMeDBGDxXg=="
-      },
       "NullGuard.Fody": {
         "type": "Direct",
         "requested": "[3.1.1, )",
@@ -125,12 +119,6 @@
         "requested": "[4.7.0, )",
         "resolved": "4.7.0",
         "contentHash": "VR4kk8XLKebQ4MZuKuIni/7oh+QGFmZW3qORd1GvBq/8026OpW501SzT/oypwiQl4TvT8ErnReh/NzY9u+C6wQ=="
-      },
-      "Text.Analyzers": {
-        "type": "Direct",
-        "requested": "[5.6.0, )",
-        "resolved": "5.6.0",
-        "contentHash": "tDYK+kID75I18NAQhK4U+FolrlpeH4eiUg8d4H5GRbc3L5GMG0ltB7ioANCtuO8V4L7DL4U2bsG1B+zgbsXd/A=="
       },
       "System.Runtime.CompilerServices.Unsafe": {
         "type": "Transitive",

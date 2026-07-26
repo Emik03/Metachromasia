@@ -112,8 +112,7 @@ public static class Signatures // ReSharper disable InconsistentNaming
         ref DamageType __2,
         ref PlantType __3,
         ref bool __4
-    )
-        where T : Plant;
+    );
 
     /// <summary>Delegate for <see cref="Plant.TakeDamage"/>.</summary>
     public delegate bool PredTakeDamage<in T>(
@@ -123,6 +122,5 @@ public static class Signatures // ReSharper disable InconsistentNaming
         ref DamageType __2,
         ref PlantType __3,
         ref bool __4
-    )
-        where T : Plant;
+    );
 }
