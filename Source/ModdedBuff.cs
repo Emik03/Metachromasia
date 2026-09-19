@@ -8,9 +8,6 @@ sealed class ModdedBuff : BaseBuff<AdvBuff>
     /// <summary>Contains the index of <see cref="AdvBuff"/> in <see cref="BuffType"/>.</summary>
     readonly int _index;
 
-    /// <summary>The value in <see cref="GetDescription"/>.</summary>
-    readonly string? _description;
-
     /// <inheritdoc />
     public ModdedBuff()
         : base(ClassInjector.DerivedConstructorPointer<ModdedBuff>()) =>
@@ -19,7 +16,7 @@ sealed class ModdedBuff : BaseBuff<AdvBuff>
     /// <inheritdoc />
     public ModdedBuff(int index, string description)
         : this() =>
-        (_index, _description) = (index, description);
+        (_index, Description) = (index, description);
 
     /// <inheritdoc />
     [UsedImplicitly]
@@ -30,5 +27,5 @@ sealed class ModdedBuff : BaseBuff<AdvBuff>
     public override AdvBuff BuffType => (AdvBuff)_index;
 
     /// <inheritdoc />
-    public override string? GetDescription() => _description;
+    public override string? Description { get; }
 }

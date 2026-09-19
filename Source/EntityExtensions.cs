@@ -88,11 +88,11 @@ public static class EntityExtensions
                 : [];
     }
 
-    extension(BulletMoveWay b)
-    {
-        /// <summary>Gets the row offset.</summary>
-        public int Row => b switch { BulletMoveWay.Three_up => -1, BulletMoveWay.Three_down => 1, _ => 0 };
-    }
+    // extension(BulletMoveWay b)
+    // {
+    //     /// <summary>Gets the row offset.</summary>
+    //     public int Row => b switch { BulletMoveWay.Three_up => -1, BulletMoveWay.Three_down => 1, _ => 0 };
+    // }
 
     extension(Component c)
     {
@@ -219,7 +219,8 @@ public static class EntityExtensions
 
             foreach (var f in y.IsEmpty ? [0] : y)
             {
-                b = CreateBullet.Instance.SetBullet(p.x + x, p.y + f, plant.thePlantRow + move.Row, bulletType, move);
+                var row = plant.thePlantRow /* + move.Row */;
+                b = CreateBullet.Instance.SetBullet(p.x + x, p.y + f, row, bulletType, move);
 
                 if (damage.Value is { } d)
                     b.Damage = d;

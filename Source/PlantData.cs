@@ -15,7 +15,7 @@ public sealed record PlantData(int Id, bool AddSeedSlot = false, Tag Tag = defau
     static readonly Dictionary<Assembly, IReadOnlyList<Object>> s_assets = [];
 
     /// <summary>Contains the registered callbacks.</summary>
-    readonly Dictionary<string, Action<GameObject>> _callbacks = [with(StringComparer.Ordinal)];
+    readonly Dictionary<string, Action<GameObject>> _callbacks = new(StringComparer.Ordinal);
 
     /// <inheritdoc />
     public PlantData(int id, params Fusions fusions)

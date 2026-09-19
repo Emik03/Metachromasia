@@ -39,7 +39,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
     const string Box = "OutOfTheBox", Sub = "%s";
 
     /// <summary>The bullets registered using <see cref="GetBulletRegistrator"/>.</summary>
-    static readonly Dictionary<string, BulletType> s_bullets = [with(StringComparer.Ordinal)];
+    static readonly Dictionary<string, BulletType> s_bullets = new(StringComparer.Ordinal);
 
     /// <summary>
     /// The starting index for the list of buffs. If <see langword="null"/>, these buffs are additions.
@@ -270,13 +270,13 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
         return Travel;
     }
 
-    /// <summary>Gets the <see cref="Action{T}"/> for assigning <see cref="Bullet.penetrationTimes"/>.</summary>
+    /// <summary>Gets the <see cref="Action{T}"/> for assigning <see cref="Bullet.maxHitCount"/>.</summary>
     /// <param name="times">The value to assign.</param>
     /// <returns>
-    /// The <see cref="Action{T}"/> that assigns <see cref="Bullet.penetrationTimes"/>
+    /// The <see cref="Action{T}"/> that assigns <see cref="Bullet.maxHitCount"/>
     /// to the parameter <paramref name="times"/>.
     /// </returns>
-    public static Action<Bullet> Pierce(int times) => b => b.penetrationTimes = times;
+    public static Action<Bullet> Pierce(int times) => b => b.maxHitCount = times;
 
     /// <summary>Gets the <see cref="Action{T}"/> for rotating a bullet in a cycle.</summary>
     /// <param name="cycle">The cycle of angles to rotate the bullet by.</param>
@@ -290,7 +290,8 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             throw new InvalidOperationException($"{nameof(Rotate)}'s {nameof(cycle)} should not be empty or null.");
 
         var i = -1;
-        return x => x.Rotate(x.gameObject, cycle[i = (i + 1) % cycle.Count]);
+        // return x => x.Rotate(x.gameObject, cycle[i = (i + 1) % cycle.Count]);
+        return x => x.transform.Rotate(Vector3.right * cycle[i = (i + 1) % cycle.Count]);
     }
 
     /// <summary>Gets the <see cref="Action{T}"/> for rotating a bullet within a random range.</summary>
@@ -300,7 +301,9 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
     /// The <see cref="Action{T}"/> that rotates a bullet within the range of
     /// the parameters <paramref name="min"/> and <paramref name="max"/>.
     /// </returns>
-    public static Action<Bullet> Rotate(int min, int max) => x => x.Rotate(x.gameObject, Random.Range(min, max));
+    public static Action<Bullet> Rotate(int min, int max) =>
+        // x => x.Rotate(x.gameObject, Random.Range(min, max));
+        x => x.transform.Rotate(Vector3.right * Random.Range(min, max));
 
     /// <summary>Gets the bullet registrator.</summary>
     /// <typeparam name="T">The type of bullet to add.</typeparam>
@@ -427,6 +430,7 @@ public abstract partial class PlantInjector<TPlugin, TPlant, TBullet> : Localiza
             return;
 
         GameAPP.resourcesManager.allPlants.Add(Plant.Type);
+        PlantDataManager.unlocked.TryAdd(Plant.Type, true);
         _ = Plant.Tag.Has(Tag.AntiCrush) && TypeMgr.UncrashablePlants.Add(Plant.Type);
 
         PlantDataManager.PlantData_Modified[Plant.Type] = PlantDataManager.PlantData_Default[Plant.Type] =
